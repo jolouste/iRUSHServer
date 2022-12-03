@@ -8,14 +8,9 @@ const cookieParser = require("cookie-parser");
 const connectDB = require("./config/db");
 connectDB();
 
-const corsOptions = {
-	origin: ["http://localhost:3000"],
-	credentials: true,
-};
-
 //@desc:	MIDDLEWARES
 app.use(express.json());
-app.use(cors(corsOptions));
+app.use(cors());
 app.use(cookieParser());
 
 //@desc:	ROUTERS
