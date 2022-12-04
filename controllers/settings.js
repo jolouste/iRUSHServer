@@ -1386,6 +1386,16 @@ exports.patchRejectReason = async (req, res) => {
 			});
 		}
 
+		//update the reject reason
+		await RejectReason.findByIdAndUpdate(
+			req.params.id,
+			{
+				rejectReasonName,
+				description,
+			},
+			{ new: true }
+		);
+
 		res.status(200).send({
 			success: true,
 			message: "Successfully updated the reject reason.",
