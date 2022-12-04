@@ -1573,7 +1573,7 @@ exports.patchVoidReason = async (req, res) => {
 			});
 		}
 
-		await voidReason.findByIdAndUpdate(
+		await VoidReason.findByIdAndUpdate(
 			req.params.id,
 			{
 				voidReasonName,

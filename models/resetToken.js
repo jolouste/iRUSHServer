@@ -12,7 +12,7 @@ const resetTokenSchema = mongoose.Schema({
 	},
 	createdAt: {
 		type: Date,
-		default: Date.now(),
+		default: new Date(Date.now()),
 		expires: 1800,
 	},
 });
