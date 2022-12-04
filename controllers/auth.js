@@ -1,4 +1,5 @@
 const { User, validate } = require("../models/users");
+const Client = require("../models/clients");
 const ResetToken = require("../models/resetToken");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
@@ -44,6 +45,42 @@ exports.register = async (req, res) => {
 				role: role,
 				token: generateAuthToken(user.id, user.role),
 			},
+		});
+	} catch (error) {
+		res.status(500).send({
+			success: false,
+			message: "Internal Server Error.",
+			error: error.message,
+		});
+	}
+};
+
+exports.addclient = async (req, res) => {
+	try {
+		const { firstName, lastName, email, contactNum, course, unit, verified } =
+			req.body;
+
+		if (
+			!firstName ||
+			!lastName ||
+			!email ||
+			!contactNum ||
+			!course ||
+			!unit ||
+			!verified
+		) {
+			return res.status(400).send({
+				success: false,
+				message: "Please provide all the required fields.",
+			});
+		}
+
+		const client = await new Client({ ...req.body }).save();
+
+		res.status(201).send({
+			success: true,
+			message: "Successfully created a client.",
+			client: client,
 		});
 	} catch (error) {
 		res.status(500).send({

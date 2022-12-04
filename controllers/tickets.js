@@ -4736,6 +4736,14 @@ exports.hdsAssigntoITsupport = async (req, res) => {
 			});
 		}
 
+		if (ticket.status === "Overdue") {
+			return res.status(400).send({
+				success: false,
+				message:
+					"Invalid! This ticket has been overdue, it should not be reassigned.",
+			});
+		}
+
 		if (
 			clerkAssigned.role === "USER_SUPERADMIN" ||
 			clerkAssigned.role === "USER_ADMIN" ||
