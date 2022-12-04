@@ -1361,17 +1361,6 @@ exports.patchRejectReason = async (req, res) => {
 			});
 		}
 
-		// check the solution name if it exists in the database nad not the same as the current category name
-		if (
-			rejectReasonTitle &&
-			rejectReasonName !== rejectReason.rejectReasonName
-		) {
-			return res.status(409).send({
-				success: false,
-				message: "Reject Reason already exists.",
-			});
-		}
-
 		if (rejectReasonTitle && rejectReasonTitle._id != req.params.id) {
 			return res.status(409).send({
 				success: false,
@@ -1597,7 +1586,7 @@ exports.patchVoidReason = async (req, res) => {
 		res.status(200).send({
 			success: true,
 			message: "Successfully updated the void reason.",
-			data: voidReason,
+			voidReason,
 		});
 	} catch (error) {
 		res.status(500).send({

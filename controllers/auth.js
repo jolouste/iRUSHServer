@@ -140,7 +140,7 @@ exports.forgotpassword = async (req, res) => {
 		if (!tokenUser) {
 			tokenUser = await new ResetToken({
 				userId: user._id,
-				token: crypto.randomBytes(32).toString("hex"),
+				token: crypto.randomBytes(16).toString("hex"),
 			}).save();
 		}
 

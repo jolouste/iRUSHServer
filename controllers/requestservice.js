@@ -37,7 +37,7 @@ exports.requestservice = async (req, res) => {
 
 		const requestToken = await new RequestToken({
 			clientId: client._id,
-			token: crypto.randomBytes(32).toString("hex"),
+			token: crypto.randomBytes(16).toString("hex"),
 		}).save();
 
 		//@desc:   HTML TEMPLATE FOR SENDING EMAILS TO REQUESTER
@@ -203,13 +203,13 @@ exports.requestservice = async (req, res) => {
 			</body>
 		</html>`;
 
-		await sendEmail(client.email, "Request for a Service", mail);
-
 		res.status(200).send({
 			success: true,
 			message:
 				"An Email will be sent to your account to start requesting a new service.",
 		});
+
+		await sendEmail(client.email, "Request for a Service", mail);
 	} catch (error) {
 		return res.status(500).send({
 			success: false,

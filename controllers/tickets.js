@@ -4404,7 +4404,7 @@ exports.hdsResolveTicket = async (req, res) => {
 
 		const respondToken = await new RespondToken({
 			clientId: client._id,
-			token: crypto.randomBytes(32).toString("hex"),
+			token: crypto.randomBytes(16).toString("hex"),
 		}).save();
 
 		const likertMail = `<!DOCTYPE html>
@@ -6980,7 +6980,7 @@ exports.itsResolveTicket = async (req, res) => {
 
 		const respondToken = await new RespondToken({
 			clientId: client._id,
-			token: crypto.randomBytes(32).toString("hex"),
+			token: crypto.randomBytes(16).toString("hex"),
 		}).save();
 
 		const likertMail = `<!DOCTYPE html>

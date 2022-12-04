@@ -39,7 +39,7 @@ exports.requestreopenticket = async (req, res) => {
 
 		const requestToken = await new RequestToken({
 			clientId: client._id,
-			token: crypto.randomBytes(32).toString("hex"),
+			token: crypto.randomBytes(16).toString("hex"),
 		}).save();
 
 		//@desc:   HTML TEMPLATE FOR SENDING EMAILS TO REQUESTER
