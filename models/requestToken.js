@@ -1,8 +1,7 @@
 const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
 const RequestTokenSchema = mongoose.Schema({
 	clientId: {
-		type: Schema.Types.ObjectId,
+		type: mongoose.Schema.Types.ObjectId,
 		ref: "client",
 		required: true,
 	},
@@ -12,8 +11,8 @@ const RequestTokenSchema = mongoose.Schema({
 	},
 	createdAt: {
 		type: Date,
+		expiresAfterSeconds: 1800,
 		default: Date.now(),
-		expires: 1800,
 	},
 });
 

@@ -11,8 +11,8 @@ const RespondTokenSchema = mongoose.Schema({
 	},
 	createdAt: {
 		type: Date,
+		expiresAfterSeconds: 1800,
 		default: Date.now(),
-		expires: 1800,
 	},
 });
 
