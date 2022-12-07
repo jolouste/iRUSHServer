@@ -11,7 +11,7 @@ const RequestTokenSchema = mongoose.Schema({
 	},
 	createdAt: {
 		type: Date,
-		expiresAfterSeconds: 1800,
+		expireAfterSeconds: 1800,
 		default: Date.now(),
 	},
 });
