@@ -4,12 +4,12 @@ const RejectedService = require("../models/rejectedservice");
 const Ticket = require("../models/tickets");
 const Category = require("../models/category");
 const ReopenTicket = require("../models/reopenedTickets");
-const RequestToken = require("../models/requestToken");
 const RespondToken = require("../models/respondToken");
 const { User } = require("../models/users");
 const Likert = require("../models/likert");
 const sendEmail = require("../utils/sendMail");
 const crypto = require("crypto");
+const moment = require("moment");
 
 //@desc:	Get all the tickets created by all the clients
 //@access: 	SUPERADMIN and ADMIN ONLY
@@ -1244,11 +1244,9 @@ exports.gettickets = async (req, res) => {
 				//@desc:	Check whether the priority is High. If it is high
 				//			and not solved within 1 day. Change the status to Overdue.
 				if (ticketPriority === "High") {
-					const date = new Date();
-					const today = date.getDate();
-					const ticketCreated = ticket.createdAt.getDate();
-					const overdue = today - ticketCreated;
-					if (overdue >= 1) {
+					const ticketCreated = ticket.createdAt;
+					let overdue = moment().diff(moment(ticketCreated), "hours");
+					if (overdue >= 24) {
 						await Ticket.updateOne(
 							{ _id: ticket._id },
 							{ status: "Overdue", isOverdue: true, priority: "High" }
@@ -1258,11 +1256,9 @@ exports.gettickets = async (req, res) => {
 					//@desc:	Check whether the priority is Mid. If it is mid
 					//			and not solved within 3 days. Change the status to Overdue.
 				} else if (ticketPriority === "Mid") {
-					const date = new Date();
-					const today = date.getDate();
-					const ticketCreated = ticket.createdAt.getDate();
-					const overdue = today - ticketCreated;
-					if (overdue >= 3) {
+					const ticketCreated = ticket.createdAt;
+					let overdue = moment().diff(moment(ticketCreated), "hours");
+					if (overdue >= 72) {
 						await Ticket.updateOne(
 							{ _id: ticket._id },
 							{ status: "Overdue", isOverdue: true, priority: "High" }
@@ -1272,11 +1268,9 @@ exports.gettickets = async (req, res) => {
 					//@desc:	Check whether the priority is Mid. If it is low
 					//			and not solved within 7 days. Change the status to Overdue.
 				} else if (ticketPriority === "Low") {
-					const date = new Date();
-					const today = date.getDate();
-					const ticketCreated = ticket.createdAt.getDate();
-					const overdue = today - ticketCreated;
-					if (overdue >= 7) {
+					const ticketCreated = ticket.createdAt;
+					let overdue = moment().diff(moment(ticketCreated), "hours");
+					if (overdue >= 168) {
 						await Ticket.updateOne(
 							{ _id: ticket._id },
 							{ status: "Overdue", isOverdue: true, priority: "High" }
@@ -1345,6 +1339,7 @@ exports.gettickets = async (req, res) => {
 		res.status(200).send({
 			success: true,
 			message: "Successfully fetched all the tickets.",
+			ticket,
 			createdReopenedTicket,
 			resolvedTickets,
 			rejectedTickets,
@@ -1352,7 +1347,6 @@ exports.gettickets = async (req, res) => {
 			reopenedTickets,
 			openTickets,
 			overdueTickets,
-			ticket,
 			page: page + 1,
 			limit,
 			filteredTickets,
@@ -1680,11 +1674,9 @@ exports.getopentickets = async (req, res) => {
 				//@desc:	Check whether the priority is High. If it is high
 				//			and not solved within 1 day. Change the status to Overdue.
 				if (ticketPriority === "High") {
-					const date = new Date();
-					const today = date.getDate();
-					const ticketCreated = ticket.createdAt.getDate();
-					const overdue = today - ticketCreated;
-					if (overdue >= 1) {
+					const ticketCreated = ticket.createdAt;
+					let overdue = moment().diff(moment(ticketCreated), "hours");
+					if (overdue >= 24) {
 						await Ticket.updateOne(
 							{ _id: ticket._id },
 							{ status: "Overdue", isOverdue: true, priority: "High" }
@@ -1694,25 +1686,21 @@ exports.getopentickets = async (req, res) => {
 					//@desc:	Check whether the priority is Mid. If it is mid
 					//			and not solved within 3 days. Change the status to Overdue.
 				} else if (ticketPriority === "Mid") {
-					const date = new Date();
-					const today = date.getDate();
-					const ticketCreated = ticket.createdAt.getDate();
-					const overdue = today - ticketCreated;
-					if (overdue >= 3) {
+					const ticketCreated = ticket.createdAt;
+					let overdue = moment().diff(moment(ticketCreated), "hours");
+					if (overdue >= 72) {
 						await Ticket.updateOne(
 							{ _id: ticket._id },
 							{ status: "Overdue", isOverdue: true, priority: "High" }
 						);
 						console.log("Ticket status is overdue!");
 					}
-					//@desc:	Check whether the priority is Mid. If it is low
+					//@desc:	Check whether the priority is Low. If it is low
 					//			and not solved within 7 days. Change the status to Overdue.
 				} else if (ticketPriority === "Low") {
-					const date = new Date();
-					const today = date.getDate();
-					const ticketCreated = ticket.createdAt.getDate();
-					const overdue = today - ticketCreated;
-					if (overdue >= 7) {
+					const ticketCreated = ticket.createdAt;
+					let overdue = moment().diff(moment(ticketCreated), "hours");
+					if (overdue >= 168) {
 						await Ticket.updateOne(
 							{ _id: ticket._id },
 							{ status: "Overdue", isOverdue: true, priority: "High" }
@@ -2794,11 +2782,9 @@ exports.hdsAssignedTicket = async (req, res) => {
 				//@desc:	Check whether the priority is High. If it is high
 				//			and not solved within 1 day. Change the status to Overdue.
 				if (ticketPriority === "High") {
-					const date = new Date();
-					const today = date.getDate();
-					const ticketCreated = ticket.createdAt.getDate();
-					const overdue = today - ticketCreated;
-					if (overdue >= 1) {
+					const ticketCreated = ticket.createdAt;
+					let overdue = moment().diff(moment(ticketCreated), "hours");
+					if (overdue >= 24) {
 						await Ticket.updateOne(
 							{ _id: ticket._id },
 							{ status: "Overdue", isOverdue: true, priority: "High" }
@@ -2808,11 +2794,9 @@ exports.hdsAssignedTicket = async (req, res) => {
 					//@desc:	Check whether the priority is Mid. If it is mid
 					//			and not solved within 3 days. Change the status to Overdue.
 				} else if (ticketPriority === "Mid") {
-					const date = new Date();
-					const today = date.getDate();
-					const ticketCreated = ticket.createdAt.getDate();
-					const overdue = today - ticketCreated;
-					if (overdue >= 3) {
+					const ticketCreated = ticket.createdAt;
+					let overdue = moment().diff(moment(ticketCreated), "hours");
+					if (overdue >= 72) {
 						await Ticket.updateOne(
 							{ _id: ticket._id },
 							{ status: "Overdue", isOverdue: true, priority: "High" }
@@ -2822,11 +2806,9 @@ exports.hdsAssignedTicket = async (req, res) => {
 					//@desc:	Check whether the priority is Mid. If it is low
 					//			and not solved within 7 days. Change the status to Overdue.
 				} else if (ticketPriority === "Low") {
-					const date = new Date();
-					const today = date.getDate();
-					const ticketCreated = ticket.createdAt.getDate();
-					const overdue = today - ticketCreated;
-					if (overdue >= 7) {
+					const ticketCreated = ticket.createdAt;
+					let overdue = moment().diff(moment(ticketCreated), "hours");
+					if (overdue >= 168) {
 						await Ticket.updateOne(
 							{ _id: ticket._id },
 							{ status: "Overdue", isOverdue: true, priority: "High" }
@@ -2943,11 +2925,9 @@ exports.hdsAssignedOpenTicket = async (req, res) => {
 				//@desc:	Check whether the priority is High. If it is high
 				//			and not solved within 1 day. Change the status to Overdue.
 				if (ticketPriority === "High") {
-					const date = new Date();
-					const today = date.getDate();
-					const ticketCreated = ticket.createdAt.getDate();
-					const overdue = today - ticketCreated;
-					if (overdue >= 1) {
+					const ticketCreated = ticket.createdAt;
+					let overdue = moment().diff(moment(ticketCreated), "hours");
+					if (overdue >= 24) {
 						await Ticket.updateOne(
 							{ _id: ticket._id },
 							{ status: "Overdue", isOverdue: true, priority: "High" }
@@ -2957,11 +2937,9 @@ exports.hdsAssignedOpenTicket = async (req, res) => {
 					//@desc:	Check whether the priority is Mid. If it is mid
 					//			and not solved within 3 days. Change the status to Overdue.
 				} else if (ticketPriority === "Mid") {
-					const date = new Date();
-					const today = date.getDate();
-					const ticketCreated = ticket.createdAt.getDate();
-					const overdue = today - ticketCreated;
-					if (overdue >= 3) {
+					const ticketCreated = ticket.createdAt;
+					let overdue = moment().diff(moment(ticketCreated), "hours");
+					if (overdue >= 72) {
 						await Ticket.updateOne(
 							{ _id: ticket._id },
 							{ status: "Overdue", isOverdue: true, priority: "High" }
@@ -2971,11 +2949,9 @@ exports.hdsAssignedOpenTicket = async (req, res) => {
 					//@desc:	Check whether the priority is Mid. If it is low
 					//			and not solved within 7 days. Change the status to Overdue.
 				} else if (ticketPriority === "Low") {
-					const date = new Date();
-					const today = date.getDate();
-					const ticketCreated = ticket.createdAt.getDate();
-					const overdue = today - ticketCreated;
-					if (overdue >= 7) {
+					const ticketCreated = ticket.createdAt;
+					let overdue = moment().diff(moment(ticketCreated), "hours");
+					if (overdue >= 168) {
 						await Ticket.updateOne(
 							{ _id: ticket._id },
 							{ status: "Overdue", isOverdue: true, priority: "High" }
@@ -5335,11 +5311,9 @@ exports.itsAssignedTicket = async (req, res) => {
 				//@desc:	Check whether the priority is High. If it is high
 				//			and not solved within 1 day. Change the status to Overdue.
 				if (ticketPriority === "High") {
-					const date = new Date();
-					const today = date.getDate();
-					const ticketCreated = ticket.createdAt.getDate();
-					const overdue = today - ticketCreated;
-					if (overdue >= 1) {
+					const ticketCreated = ticket.createdAt;
+					let overdue = moment().diff(moment(ticketCreated), "hours");
+					if (overdue >= 24) {
 						await Ticket.updateOne(
 							{ _id: ticket._id },
 							{ status: "Overdue", isOverdue: true, priority: "High" }
@@ -5349,11 +5323,9 @@ exports.itsAssignedTicket = async (req, res) => {
 					//@desc:	Check whether the priority is Mid. If it is mid
 					//			and not solved within 3 days. Change the status to Overdue.
 				} else if (ticketPriority === "Mid") {
-					const date = new Date();
-					const today = date.getDate();
-					const ticketCreated = ticket.createdAt.getDate();
-					const overdue = today - ticketCreated;
-					if (overdue >= 3) {
+					const ticketCreated = ticket.createdAt;
+					let overdue = moment().diff(moment(ticketCreated), "hours");
+					if (overdue >= 72) {
 						await Ticket.updateOne(
 							{ _id: ticket._id },
 							{ status: "Overdue", isOverdue: true, priority: "High" }
@@ -5363,11 +5335,9 @@ exports.itsAssignedTicket = async (req, res) => {
 					//@desc:	Check whether the priority is Mid. If it is low
 					//			and not solved within 7 days. Change the status to Overdue.
 				} else if (ticketPriority === "Low") {
-					const date = new Date();
-					const today = date.getDate();
-					const ticketCreated = ticket.createdAt.getDate();
-					const overdue = today - ticketCreated;
-					if (overdue >= 7) {
+					const ticketCreated = ticket.createdAt;
+					let overdue = moment().diff(moment(ticketCreated), "hours");
+					if (overdue >= 168) {
 						await Ticket.updateOne(
 							{ _id: ticket._id },
 							{ status: "Overdue", isOverdue: true, priority: "High" }
@@ -5484,11 +5454,9 @@ exports.itsAssignedOpenTicket = async (req, res) => {
 				//@desc:	Check whether the priority is High. If it is high
 				//			and not solved within 1 day. Change the status to Overdue.
 				if (ticketPriority === "High") {
-					const date = new Date();
-					const today = date.getDate();
-					const ticketCreated = ticket.createdAt.getDate();
-					const overdue = today - ticketCreated;
-					if (overdue >= 1) {
+					const ticketCreated = ticket.createdAt;
+					let overdue = moment().diff(moment(ticketCreated), "hours");
+					if (overdue >= 24) {
 						await Ticket.updateOne(
 							{ _id: ticket._id },
 							{ status: "Overdue", isOverdue: true, priority: "High" }
@@ -5498,11 +5466,9 @@ exports.itsAssignedOpenTicket = async (req, res) => {
 					//@desc:	Check whether the priority is Mid. If it is mid
 					//			and not solved within 3 days. Change the status to Overdue.
 				} else if (ticketPriority === "Mid") {
-					const date = new Date();
-					const today = date.getDate();
-					const ticketCreated = ticket.createdAt.getDate();
-					const overdue = today - ticketCreated;
-					if (overdue >= 3) {
+					const ticketCreated = ticket.createdAt;
+					let overdue = moment().diff(moment(ticketCreated), "hours");
+					if (overdue >= 72) {
 						await Ticket.updateOne(
 							{ _id: ticket._id },
 							{ status: "Overdue", isOverdue: true, priority: "High" }
@@ -5512,11 +5478,9 @@ exports.itsAssignedOpenTicket = async (req, res) => {
 					//@desc:	Check whether the priority is Mid. If it is low
 					//			and not solved within 7 days. Change the status to Overdue.
 				} else if (ticketPriority === "Low") {
-					const date = new Date();
-					const today = date.getDate();
-					const ticketCreated = ticket.createdAt.getDate();
-					const overdue = today - ticketCreated;
-					if (overdue >= 7) {
+					const ticketCreated = ticket.createdAt;
+					let overdue = moment().diff(moment(ticketCreated), "hours");
+					if (overdue >= 168) {
 						await Ticket.updateOne(
 							{ _id: ticket._id },
 							{ status: "Overdue", isOverdue: true, priority: "High" }
