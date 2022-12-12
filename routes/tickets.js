@@ -49,6 +49,9 @@ const {
 	itsgetDelegateTicket,
 	itsVoidTicket,
 	itsResolveTicket,
+
+	//ATTACHMENTS
+	getUploadedFile,
 } = require("../controllers/tickets");
 
 const {
@@ -281,5 +284,13 @@ router
 	.route("/fetchlikertscale")
 	//method
 	.get(protect, adminAuth, fetchLikertData);
+
+//@desc:	GET UPLOADED FILE
+//@access:	ADMIN AND SUPERADMIN AND HELPDESKSUPPORT ONLY
+router
+	//routes
+	.route("/getfile/:id")
+	//method
+	.get(protect, servicerequestAuth, getUploadedFile);
 
 module.exports = router;

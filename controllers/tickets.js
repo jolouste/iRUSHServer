@@ -10,6 +10,8 @@ const Likert = require("../models/likert");
 const sendEmail = require("../utils/sendMail");
 const crypto = require("crypto");
 const moment = require("moment");
+const path = require("path");
+const fs = require("fs");
 
 //@desc:	Get all the tickets created by all the clients
 //@access: 	SUPERADMIN and ADMIN ONLY
@@ -7306,6 +7308,41 @@ exports.fetchLikertData = async (req, res) => {
 			message: "Likert data fetched successfully.",
 			likert,
 		});
+	} catch (error) {
+		res.status(500).send({
+			success: false,
+			message: "Internal Server Error.",
+			error: error.message,
+		});
+	}
+};
+
+//@desc: for file upload
+exports.getUploadedFile = async (req, res) => {
+	try {
+		const attachment = await Service.findOne({ _id: req.params.id });
+
+		//get the file path
+		const filePath = path.join(__dirname, `../${attachment.attachments}`);
+
+		//preview the file in the browser using the file path
+		res.sendFile(
+			filePath,
+			{
+				headers: {
+					"Content-Type": "application/pdf",
+				},
+			},
+			err => {
+				if (err) {
+					res.status(400).send({
+						success: false,
+						message: "Error occured when fetching the file.",
+						error: err.message,
+					});
+				}
+			}
+		);
 	} catch (error) {
 		res.status(500).send({
 			success: false,

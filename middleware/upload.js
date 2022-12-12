@@ -1,5 +1,6 @@
 const multer = require("multer");
 const path = require("path");
+const moment = require("moment");
 
 const storage = multer.diskStorage({
 	destination: function (req, file, cb) {
@@ -7,7 +8,7 @@ const storage = multer.diskStorage({
 	},
 	filename: function (req, file, cb) {
 		let ext = path.extname(file.originalname);
-		cb(null, file.fieldname + "-" + Date.now() + ext);
+		cb(null, file.fieldname + "-" + moment().format("YYYYMMDD") + ext);
 	},
 });
 
@@ -25,7 +26,6 @@ const upload = multer({
 				"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 		) {
 			cb(null, true);
-			console.log("File uploaded successfully. File type: " + file.mimetype);
 		} else {
 			cb("File Type is not supported.", false);
 		}
