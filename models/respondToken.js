@@ -8,11 +8,11 @@ const RespondTokenSchema = mongoose.Schema({
 	token: {
 		type: String,
 		required: true,
+		expires: 1800,
 	},
 	createdAt: {
 		type: Date,
 		default: Date.now(),
-		expires: 1800,
 	},
 });
 

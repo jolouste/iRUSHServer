@@ -31,7 +31,7 @@ exports.getrequestservices = async (req, res) => {
 			: (serviceCategory = req.query.category.split(","));
 
 		const filteredServiceRequests = await Service.find({
-			requestNo: { $regex: search, $options: "i" },
+			referenceNo: { $regex: search, $options: "i" },
 			category: { $in: serviceCategory },
 			createdAt: {
 				// if no date is selected, it will return all the tickets created
@@ -45,7 +45,7 @@ exports.getrequestservices = async (req, res) => {
 
 		const total = await Service.countDocuments({
 			category: { $in: [...serviceCategory] },
-			requestNo: { $regex: search, $options: "i" },
+			referenceNo: { $regex: search, $options: "i" },
 			createdAt: {
 				// if no date is selected, it will return all the tickets created
 				$gte: req.query.dateFrom ? req.query.dateFrom : new Date(0),
@@ -1381,7 +1381,7 @@ exports.getreopenedticketsrequests = async (req, res) => {
 			: (ticketCategory = req.query.ticketCategory.split(","));
 
 		const filteredReopenedTicketRequests = await ReopenTicket.find({
-			requestNo: { $regex: search, $options: "i" },
+			referenceNo: { $regex: search, $options: "i" },
 			ticketCategory: { $in: ticketCategory },
 			createdAt: {
 				// if no date is selected, it will return all the tickets created
@@ -1395,7 +1395,7 @@ exports.getreopenedticketsrequests = async (req, res) => {
 
 		const total = await ReopenTicket.countDocuments({
 			ticketCategory: { $in: [...ticketCategory] },
-			requestNo: { $regex: search, $options: "i" },
+			referenceNo: { $regex: search, $options: "i" },
 			createdAt: {
 				// if no date is selected, it will return all the tickets created
 				$gte: req.query.dateFrom ? req.query.dateFrom : new Date(0),
@@ -1556,7 +1556,7 @@ exports.getrejectedservices = async (req, res) => {
 			: (serviceCategory = req.query.category.split(","));
 
 		const filteredRejectedServiceRequests = await RejectedService.find({
-			requestNo: { $regex: search, $options: "i" },
+			referenceNo: { $regex: search, $options: "i" },
 			category: { $in: serviceCategory },
 			createdAt: {
 				// if no date is selected, it will return all the tickets created
@@ -1570,7 +1570,7 @@ exports.getrejectedservices = async (req, res) => {
 
 		const total = await RejectedService.countDocuments({
 			category: { $in: [...serviceCategory] },
-			requestNo: { $regex: search, $options: "i" },
+			referenceNo: { $regex: search, $options: "i" },
 			createdAt: {
 				// if no date is selected, it will return all the tickets created
 				$gte: req.query.dateFrom ? req.query.dateFrom : new Date(0),
