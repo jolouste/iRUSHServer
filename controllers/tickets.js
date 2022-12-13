@@ -7321,28 +7321,20 @@ exports.fetchLikertData = async (req, res) => {
 exports.getUploadedFile = async (req, res) => {
 	try {
 		const attachment = await Service.findOne({ _id: req.params.id });
-
 		//get the file path
-		const filePath = path.join(__dirname, `../${attachment.attachments}`);
 
-		//preview the file in the browser using the file path
-		res.sendFile(
-			filePath,
-			{
-				headers: {
-					"Content-Type": "application/pdf",
-				},
-			},
-			err => {
-				if (err) {
-					res.status(400).send({
-						success: false,
-						message: "Error occured when fetching the file.",
-						error: err.message,
-					});
-				}
+		fs.readFile(attachment.attachments, (err, data) => {
+			if (err) {
+				return res.status(404).send({
+					success: false,
+					message: "File not found.",
+				});
+			} else {
+				res.writeHead(200);
+				res.write(data);
+				res.end();
 			}
-		);
+		});
 	} catch (error) {
 		res.status(500).send({
 			success: false,
