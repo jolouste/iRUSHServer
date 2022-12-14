@@ -12,7 +12,7 @@ const RequestTokenSchema = mongoose.Schema({
 	createdAt: {
 		type: Date,
 		default: Date.now(),
-		createIndex: { expireAfterSeconds: 1800 },
+		expireAfterSeconds: 1800,
 	},
 });
 

@@ -203,13 +203,13 @@ exports.requestservice = async (req, res) => {
 			</body>
 		</html>`;
 
+		await sendEmail(client.email, "Request for a Service", mail);
+
 		res.status(200).send({
 			success: true,
 			message:
 				"An Email will be sent to your account to start requesting a new service.",
 		});
-
-		await sendEmail(client.email, "Request for a Service", mail);
 	} catch (error) {
 		return res.status(500).send({
 			success: false,
@@ -292,7 +292,7 @@ exports.postcreateticket = async (req, res) => {
 			clientId: client.id,
 			clientUnit: client.unit,
 			requestNo: requestNumber,
-			requester: `${client.firstName} ${client.lastName}`,
+			requester: `${client.lastName}, ${client.firstName}`,
 			requesterEmail: client.email,
 			clientContact: client.contactNum,
 			category,

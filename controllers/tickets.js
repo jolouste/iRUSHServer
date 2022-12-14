@@ -171,7 +171,7 @@ exports.createticket = async (req, res) => {
 			assignTo,
 			assignBy: assignee.email,
 			requester: client.email,
-			requesterName: `${client.firstName} ${client.lastName}`,
+			requesterName: `${client.lastName}, ${client.firstName}`,
 			clientContactNum: client.contactNum,
 			clientUnit: client.unit,
 			ticketSubject: service.subject,
@@ -7321,18 +7321,41 @@ exports.fetchLikertData = async (req, res) => {
 exports.getUploadedFile = async (req, res) => {
 	try {
 		const attachment = await Service.findOne({ _id: req.params.id });
-		//get the file path
+		const fileExtension = attachment.attachments.split(".").pop();
+		//get the file extension
 
-		fs.readFile(attachment.attachments, (err, data) => {
-			if (err) {
+		fs.readFile(attachment.attachments, (error, data) => {
+			if (error) {
 				return res.status(404).send({
 					success: false,
 					message: "File not found.",
 				});
 			} else {
-				res.writeHead(200);
-				res.write(data);
-				res.end();
+				if (fileExtension === "pdf") {
+					res.writeHead(200, {
+						"Content-Type": "application/pdf",
+					});
+					res.write(data);
+					res.end();
+				} else if (fileExtension === "jpg") {
+					res.writeHead(200, {
+						"Content-Type": "image/jpg",
+					});
+					res.write(data);
+					res.end();
+				} else if (fileExtension === "xls" || fileExtension === "xlsx") {
+					res.writeHead(200, {
+						"Content-Type": "application/vnd.ms-excel",
+					});
+					res.write(data);
+					res.end();
+				} else if (fileExtension === "csv") {
+					res.writeHead(200, {
+						"Content-Type": "text/csv",
+					});
+					res.write(data);
+					res.end();
+				}
 			}
 		});
 	} catch (error) {
