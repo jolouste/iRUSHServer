@@ -10,7 +10,6 @@ const Likert = require("../models/likert");
 const sendEmail = require("../utils/sendMail");
 const crypto = require("crypto");
 const moment = require("moment");
-const path = require("path");
 const fs = require("fs");
 
 //@desc:	Get all the tickets created by all the clients
@@ -5209,7 +5208,9 @@ exports.hdsAssigntoITsupport = async (req, res) => {
 
 		res.status(200).send({
 			success: true,
-			message: "Successfully reassigned the ticket to a CLERK IT SUPPORT.",
+			message: `Successfully reassigned to ${clerkAssigned.lastName.toUpperCase()} - ${
+				clerkAssigned.role
+			}`,
 			ticket,
 		});
 

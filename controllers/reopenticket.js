@@ -351,6 +351,14 @@ exports.reopenticket = async (req, res) => {
 			});
 		}
 
+		if (ticket.isReopened === true) {
+			return res.status(400).send({
+				success: false,
+				message:
+					"Ticket already reopened. Please wait for the ticket to be assigned.",
+			});
+		}
+
 		if (!issue) {
 			return res.status(400).send({
 				success: false,
@@ -428,6 +436,8 @@ exports.reopenticket = async (req, res) => {
 
 		client.referenceNumber = clientReferenceNumber;
 		await client.save();
+
+		await Ticket.updateOne({ _id: ticket._id }, { isReopened: true });
 
 		res.status(200).send({
 			success: true,

@@ -12,10 +12,10 @@ const RespondTokenSchema = mongoose.Schema({
 	createdAt: {
 		type: Date,
 		default: Date.now(),
-		expireAfterSeconds: 1800,
 	},
 });
 
+RespondTokenSchema.index({ createdAt: 1 }, { expireAfterSeconds: 1800 });
 const RespondToken = mongoose.model("respondtoken", RespondTokenSchema);
 
 module.exports = RespondToken;

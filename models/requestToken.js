@@ -12,10 +12,10 @@ const RequestTokenSchema = mongoose.Schema({
 	createdAt: {
 		type: Date,
 		default: Date.now(),
-		expireAfterSeconds: 1800,
 	},
 });
 
+RequestTokenSchema.index({ createdAt: 1 }, { expireAfterSeconds: 1800 });
 const RequestToken = mongoose.model("requesttoken", RequestTokenSchema);
 
 module.exports = RequestToken;

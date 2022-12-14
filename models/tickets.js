@@ -71,6 +71,10 @@ const TicketSchema = new mongoose.Schema(
 			type: Boolean,
 			default: false,
 		},
+		isReopened: {
+			type: Boolean,
+			default: false,
+		},
 		issue: {
 			type: String,
 		},

@@ -12,10 +12,10 @@ const resetTokenSchema = mongoose.Schema({
 	createdAt: {
 		type: Date,
 		default: Date.now(),
-		expireAfterSeconds: 1800,
 	},
 });
 
+resetTokenSchema.index({ createdAt: 1 }, { expireAfterSeconds: 1800 });
 const ResetToken = mongoose.model("resettoken", resetTokenSchema);
 
 module.exports = ResetToken;
