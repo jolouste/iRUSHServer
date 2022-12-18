@@ -22,6 +22,15 @@ const {
 	assignreopenedticketrequest,
 	reassignticket,
 
+	//REPORTS ROUTES
+	generateReportAllTickets,
+	generateReportOpenTickets,
+	generateReportResolvedTickets,
+	generateReportOverdueTickets,
+	generateReportRejectedTickets,
+	generateReportVoidedTickets,
+	generateReportReopenedTickets,
+
 	//LIKERT ROUTES
 	likertScale,
 	postLikertScale,
@@ -39,6 +48,14 @@ const {
 	hdsResolveTicket,
 	hdsAssigntoITsupport,
 
+	//REPORTS ROUTES FOR HELPDESK SUPPORT
+	generateReportAllTicketsHelpdesk,
+	generateReportOpenTicketsHelpdesk,
+	generateReportResolvedTicketsHelpdesk,
+	generateReportOverdueTicketsHelpdesk,
+	generateReportRejectedTicketsHelpdesk,
+	generateReportRoepenedTicketsHelpdesk,
+
 	//IT SUPPORT ROUTES
 	itsAssignedTicket,
 	itsAssignedOpenTicket,
@@ -49,6 +66,14 @@ const {
 	itsgetDelegateTicket,
 	itsVoidTicket,
 	itsResolveTicket,
+
+	//REPORTS ROUTES FOR IT SUPPORT
+	generateReportAllTicketsItsupp,
+	generateReportOpenTicketsItsupp,
+	generateReportResolvedTicketsItsupp,
+	generateReportOverdueTicketsItsupp,
+	generateReportVoidedTicketsItsupp,
+	generateReportReopenedTicketsItsupp,
 
 	//ATTACHMENTS
 	getUploadedFile,
@@ -292,5 +317,125 @@ router
 	.route("/getfile/:id")
 	//method
 	.get(protect, servicerequestAuth, getUploadedFile);
+
+//@desc:	FOR REPORTS
+//@access:	ADMIN AND SUPERADMIN ONLY
+router
+	//routes
+	.route("/report")
+	//method
+	.get(protect, adminAuth, generateReportAllTickets);
+
+router
+	//routes
+	.route("/report/opentickets")
+	//method
+	.get(protect, adminAuth, generateReportOpenTickets);
+
+router
+	//routes
+	.route("/report/resolvedtickets")
+	//method
+	.get(protect, adminAuth, generateReportResolvedTickets);
+
+router
+	//routes
+	.route("/report/overduetickets")
+	//method
+	.get(protect, adminAuth, generateReportOverdueTickets);
+
+router
+	//routes
+	.route("/report/rejectedtickets")
+	//method
+	.get(protect, adminAuth, generateReportRejectedTickets);
+
+router
+	//routes
+	.route("/report/voidedtickets")
+	//method
+	.get(protect, adminAuth, generateReportVoidedTickets);
+
+router
+	//routes
+	.route("/report/reopenedtickets")
+	//method
+	.get(protect, adminAuth, generateReportReopenedTickets);
+
+//@desc:	REPORTS FOR HELPDESK SUPPORT
+//@access:	CLERK HELPDESKSUPPORT
+router
+	//routes
+	.route("/helpdesksupport/report")
+	//method
+	.get(protect, clerkHelpdeskSupport, generateReportAllTicketsHelpdesk);
+
+router
+	//routes
+	.route("/helpdesksupport/report/opentickets")
+	//method
+	.get(protect, clerkHelpdeskSupport, generateReportOpenTicketsHelpdesk);
+
+router
+	//routes
+	.route("/helpdesksupport/report/resolvedtickets")
+	//method
+	.get(protect, clerkHelpdeskSupport, generateReportResolvedTicketsHelpdesk);
+
+router
+	//routes
+	.route("/helpdesksupport/report/overduetickets")
+	//method
+	.get(protect, clerkHelpdeskSupport, generateReportOverdueTicketsHelpdesk);
+
+router
+	//routes
+	.route("/helpdesksupport/report/rejectedtickets")
+	//method
+	.get(protect, clerkHelpdeskSupport, generateReportRejectedTicketsHelpdesk);
+
+router
+	//routes
+	.route("/helpdesksupport/report/reopenedtickets")
+	//method
+	.get(protect, clerkHelpdeskSupport, generateReportRoepenedTicketsHelpdesk);
+
+//@desc:	REPORTS FOR IT SUPPORT
+//@access:	CLERK ITSUPPORT
+router
+	//routes
+	.route("/itsupport/report")
+	//method
+	.get(protect, clerkITSupport, generateReportAllTicketsItsupp);
+
+router
+	//routes
+	.route("/itsupport/report/opentickets")
+	//method
+	.get(protect, clerkITSupport, generateReportOpenTicketsItsupp);
+
+router
+	//routes
+	.route("/itsupport/report/resolvedtickets")
+	//method
+	.get(protect, clerkITSupport, generateReportResolvedTicketsItsupp);
+
+router
+	//routes
+	.route("/itsupport/report/overduetickets")
+	//method
+	.get(protect, clerkITSupport, generateReportOverdueTicketsItsupp);
+
+router
+	//routes
+	.route("/itsupport/report/voidedtickets")
+	//method
+	.get(protect, clerkITSupport, generateReportVoidedTicketsItsupp);
+
+router
+	//routes
+	.route("/itsupport/report/reopenedtickets")
+	//method
+	.get(protect, clerkITSupport, generateReportReopenedTicketsItsupp);
 
 module.exports = router;
