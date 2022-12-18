@@ -325,13 +325,13 @@ exports.postcreateticket = async (req, res) => {
 			year + "" + "" + month + "" + day + "" + hour + "" + minute;
 
 		function subjectIndex() {
-			if (subject === "Credentials") {
+			if (subject === "Submission of missing documents") {
 				return `${1}`;
-			} else if (subject === "Authentication") {
+			} else if (subject === "Shifting/Transfer") {
 				return `${2}`;
-			} else if (subject === "Verification") {
+			} else if (subject === "Transcripts of Records") {
 				return `${3}`;
-			} else if (subject === "Other related concerns") {
+			} else if (subject === "Updating Information") {
 				return `${4}`;
 			}
 		}
