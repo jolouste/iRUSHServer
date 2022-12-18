@@ -7371,1913 +7371,1913 @@ exports.getUploadedFile = async (req, res) => {
 	}
 };
 
-// ---------------------REPORTS--------------------- //
-
-//@desc:	GENERATE REPORT
-//@access:	SUPERADMIN AND ADMIN
-exports.generateReportAllTickets = async (req, res) => {
-	try {
-		const ticket = await Ticket.find();
-		const reportName = `report-alltickets-${moment(Date.now()).format(
-			"YYYYMMDD"
-		)}.pdf`;
-		const reportPath = path.join("reports", reportName);
-		const pdfDoc = new PDFDocument({ size: "A4", margin: 50 });
-
-		const table = {
-			headers: [
-				{
-					label: "TICKET NO.",
-					property: "ticketNo",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "SUBJECT",
-					property: "subject",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "REQUESTER",
-					property: "requester",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "UNIT",
-					property: "unit",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "DATE CREATED",
-					property: "createdAt",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "STATUS",
-					property: "status",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "PRIORITY",
-					property: "priority",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-			],
-
-			datas: [
-				...ticket.map(ticket => {
-					const ticketCategory = ticket.ticketCategory;
-
-					//get the initials of the ticket category
-					const initials = ticketCategory
-						.split(" ")
-						.map(word => word[0])
-						.join("");
-
-					return {
-						ticketNo: `bold:${ticket.ticketNo} - ${initials.toUpperCase()}`,
-						subject: ticket.ticketSubject,
-						requester: ticket.requester,
-						unit: ticket.clientUnit,
-						createdAt: moment(ticket.createdAt).format(
-							"MMMM Do YYYY, h:mm:ss a"
-						),
-						status: ticket.status,
-						priority: `bold:${ticket.priority.toUpperCase()}`,
-					};
-				}),
-			],
-		};
-
-		res.setHeader("Content-Type", "application/pdf");
-		res.setHeader("Content-Disposition", `inline; filename="${reportName}"`);
-
-		pdfDoc.pipe(fs.createWriteStream(reportPath));
-		await pdfDoc.table(table);
-
-		pdfDoc.pipe(res);
-		pdfDoc.end();
-	} catch (error) {
-		res.status(500).send({
-			success: false,
-			message: "Internal Server Error.",
-			error: error.message,
-		});
-	}
-};
-
-//@desc:	GENERATE REPORT
-//@access:	SUPERADMIN AND ADMIN
-exports.generateReportOpenTickets = async (req, res) => {
-	try {
-		const ticket = await Ticket.find({ status: "Open" });
-		const reportName = `report-opentickets-${moment(Date.now()).format(
-			"YYYYMMDD"
-		)}.pdf`;
-		const reportPath = path.join("reports", reportName);
-		const pdfDoc = new PDFDocument({ size: "A4", margin: 50 });
-
-		const table = {
-			headers: [
-				{
-					label: "TICKET NO.",
-					property: "ticketNo",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "SUBJECT",
-					property: "subject",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "REQUESTER",
-					property: "requester",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "UNIT",
-					property: "unit",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "DATE CREATED",
-					property: "createdAt",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "PRIORITY",
-					property: "priority",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-			],
-
-			datas: [
-				...ticket.map(ticket => {
-					const ticketCategory = ticket.ticketCategory;
-
-					//get the initials of the ticket category
-					const initials = ticketCategory
-						.split(" ")
-						.map(word => word[0])
-						.join("");
-
-					return {
-						ticketNo: `bold:${ticket.ticketNo} - ${initials.toUpperCase()}`,
-						subject: ticket.ticketSubject,
-						requester: ticket.requester,
-						unit: ticket.clientUnit,
-						createdAt: moment(ticket.createdAt).format(
-							"MMMM Do YYYY, h:mm:ss a"
-						),
-						priority: `bold:${ticket.priority.toUpperCase()}`,
-					};
-				}),
-			],
-		};
-		res.setHeader("Content-Type", "application/pdf");
-		res.setHeader("Content-Disposition", `inline; filename="${reportName}"`);
-
-		pdfDoc.pipe(fs.createWriteStream(reportPath));
-		await pdfDoc.table(table);
-
-		pdfDoc.pipe(res);
-		pdfDoc.end();
-	} catch (error) {
-		res.status(500).send({
-			success: false,
-			message: "Internal Server Error.",
-			error: error.message,
-		});
-	}
-};
-
-//@desc:	GENERATE REPORT
-//@access:	SUPERADMIN AND ADMIN
-exports.generateReportResolvedTickets = async (req, res) => {
-	try {
-		const ticket = await Ticket.find({ status: "Resolved" });
-		const reportName = `report-resolvedtickets-${moment(Date.now()).format(
-			"YYYYMMDD"
-		)}.pdf`;
-		const reportPath = path.join("reports", reportName);
-		const pdfDoc = new PDFDocument({ size: "A4", margin: 50 });
-
-		const table = {
-			headers: [
-				{
-					label: "TICKET NO.",
-					property: "ticketNo",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "SUBJECT",
-					property: "subject",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "REQUESTER",
-					property: "requester",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "UNIT",
-					property: "unit",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "DATE CREATED",
-					property: "createdAt",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "PRIORITY",
-					property: "priority",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-			],
-
-			datas: [
-				...ticket.map(ticket => {
-					const ticketCategory = ticket.ticketCategory;
-
-					//get the initials of the ticket category
-					const initials = ticketCategory
-						.split(" ")
-						.map(word => word[0])
-						.join("");
-
-					return {
-						ticketNo: `bold:${ticket.ticketNo} - ${initials.toUpperCase()}`,
-						subject: ticket.ticketSubject,
-						requester: ticket.requester,
-						unit: ticket.clientUnit,
-						createdAt: moment(ticket.createdAt).format(
-							"MMMM Do YYYY, h:mm:ss a"
-						),
-						priority: `bold:${ticket.priority.toUpperCase()}`,
-					};
-				}),
-			],
-		};
-		res.setHeader("Content-Type", "application/pdf");
-		res.setHeader("Content-Disposition", `inline; filename="${reportName}"`);
-
-		pdfDoc.pipe(fs.createWriteStream(reportPath));
-		await pdfDoc.table(table);
-
-		pdfDoc.pipe(res);
-		pdfDoc.end();
-	} catch (error) {
-		res.status(500).send({
-			success: false,
-			message: "Internal Server Error.",
-			error: error.message,
-		});
-	}
-};
-
-//@desc:	GENERATE REPORT
-//@access:	SUPERADMIN AND ADMIN
-exports.generateReportOverdueTickets = async (req, res) => {
-	try {
-		const ticket = await Ticket.find({ status: "Overdue" });
-		const reportName = `report-overduetickets-${moment(Date.now()).format(
-			"YYYYMMDD"
-		)}.pdf`;
-		const reportPath = path.join("reports", reportName);
-		const pdfDoc = new PDFDocument({ size: "A4", margin: 50 });
-
-		const table = {
-			headers: [
-				{
-					label: "TICKET NO.",
-					property: "ticketNo",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "SUBJECT",
-					property: "subject",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "REQUESTER",
-					property: "requester",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "UNIT",
-					property: "unit",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "DATE CREATED",
-					property: "createdAt",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "PRIORITY",
-					property: "priority",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-			],
-
-			datas: [
-				...ticket.map(ticket => {
-					const ticketCategory = ticket.ticketCategory;
-
-					//get the initials of the ticket category
-					const initials = ticketCategory
-						.split(" ")
-						.map(word => word[0])
-						.join("");
-
-					return {
-						ticketNo: `bold:${ticket.ticketNo} - ${initials.toUpperCase()}`,
-						subject: ticket.ticketSubject,
-						requester: ticket.requester,
-						unit: ticket.clientUnit,
-						createdAt: moment(ticket.createdAt).format(
-							"MMMM Do YYYY, h:mm:ss a"
-						),
-						priority: `bold:${ticket.priority.toUpperCase()}`,
-					};
-				}),
-			],
-		};
-		res.setHeader("Content-Type", "application/pdf");
-		res.setHeader("Content-Disposition", `inline; filename="${reportName}"`);
-
-		pdfDoc.pipe(fs.createWriteStream(reportPath));
-		await pdfDoc.table(table);
-
-		pdfDoc.pipe(res);
-		pdfDoc.end();
-	} catch (error) {
-		res.status(500).send({
-			success: false,
-			message: "Internal Server Error.",
-			error: error.message,
-		});
-	}
-};
-
-//@desc:	GENERATE REPORT
-//@access:	SUPERADMIN AND ADMIN
-exports.generateReportRejectedTickets = async (req, res) => {
-	try {
-		const ticket = await Ticket.find({ status: "Rejected" });
-		const reportName = `report-overduetickets-${moment(Date.now()).format(
-			"YYYYMMDD"
-		)}.pdf`;
-		const reportPath = path.join("reports", reportName);
-		const pdfDoc = new PDFDocument({ size: "A4", margin: 50 });
-
-		const table = {
-			headers: [
-				{
-					label: "TICKET NO.",
-					property: "ticketNo",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "SUBJECT",
-					property: "subject",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "REQUESTER",
-					property: "requester",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "UNIT",
-					property: "unit",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "DATE CREATED",
-					property: "createdAt",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "PRIORITY",
-					property: "priority",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-			],
-
-			datas: [
-				...ticket.map(ticket => {
-					const ticketCategory = ticket.ticketCategory;
-
-					//get the initials of the ticket category
-					const initials = ticketCategory
-						.split(" ")
-						.map(word => word[0])
-						.join("");
-
-					return {
-						ticketNo: `bold:${ticket.ticketNo} - ${initials.toUpperCase()}`,
-						subject: ticket.ticketSubject,
-						requester: ticket.requester,
-						unit: ticket.clientUnit,
-						createdAt: moment(ticket.createdAt).format(
-							"MMMM Do YYYY, h:mm:ss a"
-						),
-						priority: `bold:${ticket.priority.toUpperCase()}`,
-					};
-				}),
-			],
-		};
-		res.setHeader("Content-Type", "application/pdf");
-		res.setHeader("Content-Disposition", `inline; filename="${reportName}"`);
-
-		pdfDoc.pipe(fs.createWriteStream(reportPath));
-		await pdfDoc.table(table);
-
-		pdfDoc.pipe(res);
-		pdfDoc.end();
-	} catch (error) {
-		res.status(500).send({
-			success: false,
-			message: "Internal Server Error.",
-			error: error.message,
-		});
-	}
-};
-
-//@desc: 	GENERATE REPORT
-//@access:	SUPERADMIN AND ADMIN
-exports.generateReportVoidedTickets = async (req, res) => {
-	try {
-		const ticket = await Ticket.find({ status: "Voided" });
-		const reportName = `report-overduetickets-${moment(Date.now()).format(
-			"YYYYMMDD"
-		)}.pdf`;
-		const reportPath = path.join("reports", reportName);
-		const pdfDoc = new PDFDocument({ size: "A4", margin: 50 });
-
-		const table = {
-			headers: [
-				{
-					label: "TICKET NO.",
-					property: "ticketNo",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "SUBJECT",
-					property: "subject",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "REQUESTER",
-					property: "requester",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "UNIT",
-					property: "unit",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "DATE CREATED",
-					property: "createdAt",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "PRIORITY",
-					property: "priority",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-			],
-
-			datas: [
-				...ticket.map(ticket => {
-					const ticketCategory = ticket.ticketCategory;
-
-					//get the initials of the ticket category
-					const initials = ticketCategory
-						.split(" ")
-						.map(word => word[0])
-						.join("");
-
-					return {
-						ticketNo: `bold:${ticket.ticketNo} - ${initials.toUpperCase()}`,
-						subject: ticket.ticketSubject,
-						requester: ticket.requester,
-						unit: ticket.clientUnit,
-						createdAt: moment(ticket.createdAt).format(
-							"MMMM Do YYYY, h:mm:ss a"
-						),
-						priority: `bold:${ticket.priority.toUpperCase()}`,
-					};
-				}),
-			],
-		};
-		res.setHeader("Content-Type", "application/pdf");
-		res.setHeader("Content-Disposition", `inline; filename="${reportName}"`);
-
-		pdfDoc.pipe(fs.createWriteStream(reportPath));
-		await pdfDoc.table(table);
-
-		pdfDoc.pipe(res);
-		pdfDoc.end();
-	} catch (error) {
-		res.status(500).send({
-			success: false,
-			message: "Internal Server Error.",
-			error: error.message,
-		});
-	}
-};
-
-//@desc: 	GENERATE REPORT
-//@access:	SUPERADMIN AND ADMIN
-exports.generateReportReopenedTickets = async (req, res) => {
-	try {
-		const ticket = await Ticket.find({ status: "Reopened" });
-		const reportName = `report-overduetickets-${moment(Date.now()).format(
-			"YYYYMMDD"
-		)}.pdf`;
-		const reportPath = path.join("reports", reportName);
-		const pdfDoc = new PDFDocument({ size: "A4", margin: 50 });
-
-		const table = {
-			headers: [
-				{
-					label: "TICKET NO.",
-					property: "ticketNo",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "SUBJECT",
-					property: "subject",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "REQUESTER",
-					property: "requester",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "UNIT",
-					property: "unit",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "DATE CREATED",
-					property: "createdAt",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "PRIORITY",
-					property: "priority",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-			],
-
-			datas: [
-				...ticket.map(ticket => {
-					const ticketCategory = ticket.ticketCategory;
-
-					//get the initials of the ticket category
-					const initials = ticketCategory
-						.split(" ")
-						.map(word => word[0])
-						.join("");
-
-					return {
-						ticketNo: `bold:${ticket.ticketNo} - ${initials.toUpperCase()}`,
-						subject: ticket.ticketSubject,
-						requester: ticket.requester,
-						unit: ticket.clientUnit,
-						createdAt: moment(ticket.createdAt).format(
-							"MMMM Do YYYY, h:mm:ss a"
-						),
-						priority: `bold:${ticket.priority.toUpperCase()}`,
-					};
-				}),
-			],
-		};
-		res.setHeader("Content-Type", "application/pdf");
-		res.setHeader("Content-Disposition", `inline; filename="${reportName}"`);
-
-		pdfDoc.pipe(fs.createWriteStream(reportPath));
-		await pdfDoc.table(table);
-
-		pdfDoc.pipe(res);
-		pdfDoc.end();
-	} catch (error) {
-		res.status(500).send({
-			success: false,
-			message: "Internal Server Error.",
-			error: error.message,
-		});
-	}
-};
-
-// --------------------- REPORTS FOR HELPDESKSUPPORT --------------------- //
-
-//@desc: 	GENERATE REPORT FOR ALL TICKETS ASSIGNED TO HELPDESK SUPPORT
-//@access:	CLEKRHELPDESK SUPPORT
-exports.generateReportAllTicketsHelpdesk = async (req, res) => {
-	try {
-		const assignedTickets = await Ticket.find({ assignTo: req.user.email });
-		const reportName = `Helpdesk-report-alltickets-${moment(Date.now()).format(
-			"YYYYMMDD"
-		)}.pdf`;
-		const reportPath = path.join("reports", reportName);
-		const pdfDoc = new PDFDocument({ size: "A4", margin: 50 });
-
-		const table = {
-			headers: [
-				{
-					label: "TICKET NO.",
-					property: "ticketNo",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "SUBJECT",
-					property: "subject",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "REQUESTER",
-					property: "requester",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "UNIT",
-					property: "unit",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "DATE CREATED",
-					property: "createdAt",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "STATUS",
-					property: "status",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "PRIORITY",
-					property: "priority",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-			],
-
-			datas: [
-				...assignedTickets.map(ticket => {
-					const ticketCategory = ticket.ticketCategory;
-
-					//get the initials of the ticket category
-					const initials = ticketCategory
-						.split(" ")
-						.map(word => word[0])
-						.join("");
-
-					return {
-						ticketNo: `bold:${ticket.ticketNo} - ${initials.toUpperCase()}`,
-						subject: ticket.ticketSubject,
-						requester: ticket.requester,
-						unit: ticket.clientUnit,
-						createdAt: moment(ticket.createdAt).format(
-							"MMMM Do YYYY, h:mm:ss a"
-						),
-						status: ticket.status,
-						priority: `bold:${ticket.priority.toUpperCase()}`,
-					};
-				}),
-			],
-		};
-
-		res.setHeader("Content-Type", "application/pdf");
-		res.setHeader("Content-Disposition", `inline; filename="${reportName}"`);
-
-		pdfDoc.pipe(fs.createWriteStream(reportPath));
-		await pdfDoc.table(table);
-
-		pdfDoc.pipe(res);
-		pdfDoc.end();
-	} catch (error) {
-		res.status(500).send({
-			success: false,
-			message: "Internal Server Error.",
-			error: error.message,
-		});
-	}
-};
-
-//@desc: 	GENERATE REPORT FOR ALL OPEN TICKETS ASSIGNED TO HELPDESK SUPPORT
-//@access:	CLEKRHELPDESK SUPPORT
-exports.generateReportOpenTicketsHelpdesk = async (req, res) => {
-	try {
-		const assignedTickets = await Ticket.find({
-			assignTo: req.user.email,
-			status: "Open",
-		});
-		const reportName = `Helpdesk-report-opentickets-${moment(Date.now()).format(
-			"YYYYMMDD"
-		)}.pdf`;
-		const reportPath = path.join("reports", reportName);
-		const pdfDoc = new PDFDocument({ size: "A4", margin: 50 });
-
-		const table = {
-			headers: [
-				{
-					label: "TICKET NO.",
-					property: "ticketNo",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "SUBJECT",
-					property: "subject",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "REQUESTER",
-					property: "requester",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "UNIT",
-					property: "unit",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "DATE CREATED",
-					property: "createdAt",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "PRIORITY",
-					property: "priority",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-			],
-
-			datas: [
-				...assignedTickets.map(ticket => {
-					const ticketCategory = ticket.ticketCategory;
-
-					//get the initials of the ticket category
-					const initials = ticketCategory
-						.split(" ")
-						.map(word => word[0])
-						.join("");
-
-					return {
-						ticketNo: `bold:${ticket.ticketNo} - ${initials.toUpperCase()}`,
-						subject: ticket.ticketSubject,
-						requester: ticket.requester,
-						unit: ticket.clientUnit,
-						createdAt: moment(ticket.createdAt).format(
-							"MMMM Do YYYY, h:mm:ss a"
-						),
-						priority: `bold:${ticket.priority.toUpperCase()}`,
-					};
-				}),
-			],
-		};
-		res.setHeader("Content-Type", "application/pdf");
-		res.setHeader("Content-Disposition", `inline; filename="${reportName}"`);
-
-		pdfDoc.pipe(fs.createWriteStream(reportPath));
-		await pdfDoc.table(table);
-
-		pdfDoc.pipe(res);
-		pdfDoc.end();
-	} catch (error) {
-		res.status(500).send({
-			success: false,
-			message: "Internal Server Error.",
-			error: error.message,
-		});
-	}
-};
-
-//@desc: 	GENERATE REPORT FOR ALL RESOLVED TICKETS ASSIGNED TO HELPDESK SUPPORT
-//@access:	CLEKRHELPDESK SUPPORT
-exports.generateReportResolvedTicketsHelpdesk = async (req, res) => {
-	try {
-		const assignedTickets = await Ticket.find({
-			assignTo: req.user.email,
-			status: "Resolved",
-		});
-		const reportName = `Helpdesk-report-resolvedtickets-${moment(
-			Date.now()
-		).format("YYYYMMDD")}.pdf`;
-		const reportPath = path.join("reports", reportName);
-		const pdfDoc = new PDFDocument({ size: "A4", margin: 50 });
-
-		const table = {
-			headers: [
-				{
-					label: "TICKET NO.",
-					property: "ticketNo",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "SUBJECT",
-					property: "subject",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "REQUESTER",
-					property: "requester",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "UNIT",
-					property: "unit",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "DATE CREATED",
-					property: "createdAt",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "PRIORITY",
-					property: "priority",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-			],
-
-			datas: [
-				...assignedTickets.map(ticket => {
-					const ticketCategory = ticket.ticketCategory;
-
-					//get the initials of the ticket category
-					const initials = ticketCategory
-						.split(" ")
-						.map(word => word[0])
-						.join("");
-
-					return {
-						ticketNo: `bold:${ticket.ticketNo} - ${initials.toUpperCase()}`,
-						subject: ticket.ticketSubject,
-						requester: ticket.requester,
-						unit: ticket.clientUnit,
-						createdAt: moment(ticket.createdAt).format(
-							"MMMM Do YYYY, h:mm:ss a"
-						),
-						priority: `bold:${ticket.priority.toUpperCase()}`,
-					};
-				}),
-			],
-		};
-		res.setHeader("Content-Type", "application/pdf");
-		res.setHeader("Content-Disposition", `inline; filename="${reportName}"`);
-
-		pdfDoc.pipe(fs.createWriteStream(reportPath));
-		await pdfDoc.table(table);
-
-		pdfDoc.pipe(res);
-		pdfDoc.end();
-	} catch (error) {
-		res.status(500).send({
-			success: false,
-			message: "Internal Server Error.",
-			error: error.message,
-		});
-	}
-};
-
-//@desc: 	GENERATE REPORT FOR ALL OVERDUE TICKETS ASSIGNED TO HELPDESK SUPPORT
-//@access:	CLEKRHELPDESK SUPPORT
-exports.generateReportOverdueTicketsHelpdesk = async (req, res) => {
-	try {
-		const assignedTickets = await Ticket.find({
-			assignTo: req.user.email,
-			status: "Overdue",
-		});
-		const reportName = `Helpdesk-report-overduetickets-${moment(
-			Date.now()
-		).format("YYYYMMDD")}.pdf`;
-		const reportPath = path.join("reports", reportName);
-		const pdfDoc = new PDFDocument({ size: "A4", margin: 50 });
-
-		const table = {
-			headers: [
-				{
-					label: "TICKET NO.",
-					property: "ticketNo",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "SUBJECT",
-					property: "subject",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "REQUESTER",
-					property: "requester",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "UNIT",
-					property: "unit",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "DATE CREATED",
-					property: "createdAt",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "PRIORITY",
-					property: "priority",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-			],
-
-			datas: [
-				...assignedTickets.map(ticket => {
-					const ticketCategory = ticket.ticketCategory;
-
-					//get the initials of the ticket category
-					const initials = ticketCategory
-						.split(" ")
-						.map(word => word[0])
-						.join("");
-
-					return {
-						ticketNo: `bold:${ticket.ticketNo} - ${initials.toUpperCase()}`,
-						subject: ticket.ticketSubject,
-						requester: ticket.requester,
-						unit: ticket.clientUnit,
-						createdAt: moment(ticket.createdAt).format(
-							"MMMM Do YYYY, h:mm:ss a"
-						),
-						priority: `bold:${ticket.priority.toUpperCase()}`,
-					};
-				}),
-			],
-		};
-		res.setHeader("Content-Type", "application/pdf");
-		res.setHeader("Content-Disposition", `inline; filename="${reportName}"`);
-
-		pdfDoc.pipe(fs.createWriteStream(reportPath));
-		await pdfDoc.table(table);
-
-		pdfDoc.pipe(res);
-		pdfDoc.end();
-	} catch (error) {
-		res.status(500).send({
-			success: false,
-			message: "Internal Server Error.",
-			error: error.message,
-		});
-	}
-};
-
-//@desc: 	GENERATE REPORT FOR ALL REJECTED TICKETS ASSIGNED TO HELPDESK SUPPORT
-//@access:	CLEKRHELPDESK SUPPORT
-exports.generateReportRejectedTicketsHelpdesk = async (req, res) => {
-	try {
-		const assignedTickets = await Ticket.find({
-			assignTo: req.user.email,
-			status: "Rejected",
-		});
-		const reportName = `Helpdesk-report-rejectedtickets-${moment(
-			Date.now()
-		).format("YYYYMMDD")}.pdf`;
-		const reportPath = path.join("reports", reportName);
-		const pdfDoc = new PDFDocument({ size: "A4", margin: 50 });
-
-		const table = {
-			headers: [
-				{
-					label: "TICKET NO.",
-					property: "ticketNo",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "SUBJECT",
-					property: "subject",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "REQUESTER",
-					property: "requester",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "UNIT",
-					property: "unit",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "DATE CREATED",
-					property: "createdAt",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "PRIORITY",
-					property: "priority",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-			],
-
-			datas: [
-				...assignedTickets.map(ticket => {
-					const ticketCategory = ticket.ticketCategory;
-
-					//get the initials of the ticket category
-					const initials = ticketCategory
-						.split(" ")
-						.map(word => word[0])
-						.join("");
-
-					return {
-						ticketNo: `bold:${ticket.ticketNo} - ${initials.toUpperCase()}`,
-						subject: ticket.ticketSubject,
-						requester: ticket.requester,
-						unit: ticket.clientUnit,
-						createdAt: moment(ticket.createdAt).format(
-							"MMMM Do YYYY, h:mm:ss a"
-						),
-						priority: `bold:${ticket.priority.toUpperCase()}`,
-					};
-				}),
-			],
-		};
-		res.setHeader("Content-Type", "application/pdf");
-		res.setHeader("Content-Disposition", `inline; filename="${reportName}"`);
-
-		pdfDoc.pipe(fs.createWriteStream(reportPath));
-		await pdfDoc.table(table);
-
-		pdfDoc.pipe(res);
-		pdfDoc.end();
-	} catch (error) {
-		res.status(500).send({
-			success: false,
-			message: "Internal Server Error.",
-			error: error.message,
-		});
-	}
-};
-
-//@desc: 	GENERATE REPORT FOR ALL REOPENED TICKETS ASSIGNED TO HELPDESK SUPPORT
-//@access:	CLEKRHELPDESK SUPPORT
-exports.generateReportRoepenedTicketsHelpdesk = async (req, res) => {
-	try {
-		const assignedTickets = await Ticket.find({
-			assignTo: req.user.email,
-			status: "Reopened",
-		});
-		const reportName = `Helpdesk-report-reopenedtickets-${moment(
-			Date.now()
-		).format("YYYYMMDD")}.pdf`;
-		const reportPath = path.join("reports", reportName);
-		const pdfDoc = new PDFDocument({ size: "A4", margin: 50 });
-
-		const table = {
-			headers: [
-				{
-					label: "TICKET NO.",
-					property: "ticketNo",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "SUBJECT",
-					property: "subject",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "REQUESTER",
-					property: "requester",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "UNIT",
-					property: "unit",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "DATE CREATED",
-					property: "createdAt",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "PRIORITY",
-					property: "priority",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-			],
-
-			datas: [
-				...assignedTickets.map(ticket => {
-					const ticketCategory = ticket.ticketCategory;
-
-					//get the initials of the ticket category
-					const initials = ticketCategory
-						.split(" ")
-						.map(word => word[0])
-						.join("");
-
-					return {
-						ticketNo: `bold:${ticket.ticketNo} - ${initials.toUpperCase()}`,
-						subject: ticket.ticketSubject,
-						requester: ticket.requester,
-						unit: ticket.clientUnit,
-						createdAt: moment(ticket.createdAt).format(
-							"MMMM Do YYYY, h:mm:ss a"
-						),
-						priority: `bold:${ticket.priority.toUpperCase()}`,
-					};
-				}),
-			],
-		};
-		res.setHeader("Content-Type", "application/pdf");
-		res.setHeader("Content-Disposition", `inline; filename="${reportName}"`);
-
-		pdfDoc.pipe(fs.createWriteStream(reportPath));
-		await pdfDoc.table(table);
-
-		pdfDoc.pipe(res);
-		pdfDoc.end();
-	} catch (error) {
-		res.status(500).send({
-			success: false,
-			message: "Internal Server Error.",
-			error: error.message,
-		});
-	}
-};
-
-// --------------------- REPORTS FOR ITSUPPORT --------------------- //
-
-//@desc: 	GENERATE REPORT FOR ALL TICKETS ASSIGNED TO IT SUPPORT
-//@access:	IT SUPPORT
-exports.generateReportAllTicketsItsupp = async (req, res) => {
-	try {
-		const assignedTickets = await Ticket.find({ assignTo: req.user.email });
-		const reportName = `ITsupport-report-alltickets-${moment(Date.now()).format(
-			"YYYYMMDD"
-		)}.pdf`;
-		const reportPath = path.join("reports", reportName);
-		const pdfDoc = new PDFDocument({ size: "A4", margin: 50 });
-
-		const table = {
-			headers: [
-				{
-					label: "TICKET NO.",
-					property: "ticketNo",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "SUBJECT",
-					property: "subject",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "REQUESTER",
-					property: "requester",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "UNIT",
-					property: "unit",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "DATE CREATED",
-					property: "createdAt",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "STATUS",
-					property: "status",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "PRIORITY",
-					property: "priority",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-			],
-
-			datas: [
-				...assignedTickets.map(ticket => {
-					const ticketCategory = ticket.ticketCategory;
-
-					//get the initials of the ticket category
-					const initials = ticketCategory
-						.split(" ")
-						.map(word => word[0])
-						.join("");
-
-					return {
-						ticketNo: `bold:${ticket.ticketNo} - ${initials.toUpperCase()}`,
-						subject: ticket.ticketSubject,
-						requester: ticket.requester,
-						unit: ticket.clientUnit,
-						createdAt: moment(ticket.createdAt).format(
-							"MMMM Do YYYY, h:mm:ss a"
-						),
-						status: ticket.status,
-						priority: `bold:${ticket.priority.toUpperCase()}`,
-					};
-				}),
-			],
-		};
-
-		res.setHeader("Content-Type", "application/pdf");
-		res.setHeader("Content-Disposition", `inline; filename="${reportName}"`);
-
-		pdfDoc.pipe(fs.createWriteStream(reportPath));
-		await pdfDoc.table(table);
-
-		pdfDoc.pipe(res);
-		pdfDoc.end();
-	} catch (error) {
-		res.status(500).send({
-			success: false,
-			message: "Internal Server Error.",
-			error: error.message,
-		});
-	}
-};
-
-//@desc: 	GENERATE REPORT FOR ALL OPEN TICKETS ASSIGNED TO IT SUPPORT
-//@access:	IT SUPPORT
-exports.generateReportOpenTicketsItsupp = async (req, res) => {
-	try {
-		const assignedTickets = await Ticket.find({
-			assignTo: req.user.email,
-			status: "Open",
-		});
-		const reportName = `ITsupport-report-alltickets-${moment(Date.now()).format(
-			"YYYYMMDD"
-		)}.pdf`;
-		const reportPath = path.join("reports", reportName);
-		const pdfDoc = new PDFDocument({ size: "A4", margin: 50 });
-
-		const table = {
-			headers: [
-				{
-					label: "TICKET NO.",
-					property: "ticketNo",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "SUBJECT",
-					property: "subject",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "REQUESTER",
-					property: "requester",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "UNIT",
-					property: "unit",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "DATE CREATED",
-					property: "createdAt",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "PRIORITY",
-					property: "priority",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-			],
-
-			datas: [
-				...assignedTickets.map(ticket => {
-					const ticketCategory = ticket.ticketCategory;
-
-					//get the initials of the ticket category
-					const initials = ticketCategory
-						.split(" ")
-						.map(word => word[0])
-						.join("");
-
-					return {
-						ticketNo: `bold:${ticket.ticketNo} - ${initials.toUpperCase()}`,
-						subject: ticket.ticketSubject,
-						requester: ticket.requester,
-						unit: ticket.clientUnit,
-						createdAt: moment(ticket.createdAt).format(
-							"MMMM Do YYYY, h:mm:ss a"
-						),
-						priority: `bold:${ticket.priority.toUpperCase()}`,
-					};
-				}),
-			],
-		};
-
-		res.setHeader("Content-Type", "application/pdf");
-		res.setHeader("Content-Disposition", `inline; filename="${reportName}"`);
-
-		pdfDoc.pipe(fs.createWriteStream(reportPath));
-		await pdfDoc.table(table);
-
-		pdfDoc.pipe(res);
-		pdfDoc.end();
-	} catch (error) {
-		res.status(500).send({
-			success: false,
-			message: "Internal Server Error.",
-			error: error.message,
-		});
-	}
-};
-
-//@desc: 	GENERATE REPORT FOR ALL RESOLVED TICKETS ASSIGNED TO IT SUPPORT
-//@access:	IT SUPPORT
-exports.generateReportResolvedTicketsItsupp = async (req, res) => {
-	try {
-		const assignedTickets = await Ticket.find({
-			assignTo: req.user.email,
-			status: "Resolved",
-		});
-		const reportName = `ITsupport-report-resolvedtickets-${moment(
-			Date.now()
-		).format("YYYYMMDD")}.pdf`;
-		const reportPath = path.join("reports", reportName);
-		const pdfDoc = new PDFDocument({ size: "A4", margin: 50 });
-
-		const table = {
-			headers: [
-				{
-					label: "TICKET NO.",
-					property: "ticketNo",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "SUBJECT",
-					property: "subject",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "REQUESTER",
-					property: "requester",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "UNIT",
-					property: "unit",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "DATE CREATED",
-					property: "createdAt",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "PRIORITY",
-					property: "priority",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-			],
-
-			datas: [
-				...assignedTickets.map(ticket => {
-					const ticketCategory = ticket.ticketCategory;
-
-					//get the initials of the ticket category
-					const initials = ticketCategory
-						.split(" ")
-						.map(word => word[0])
-						.join("");
-
-					return {
-						ticketNo: `bold:${ticket.ticketNo} - ${initials.toUpperCase()}`,
-						subject: ticket.ticketSubject,
-						requester: ticket.requester,
-						unit: ticket.clientUnit,
-						createdAt: moment(ticket.createdAt).format(
-							"MMMM Do YYYY, h:mm:ss a"
-						),
-						priority: `bold:${ticket.priority.toUpperCase()}`,
-					};
-				}),
-			],
-		};
-
-		res.setHeader("Content-Type", "application/pdf");
-		res.setHeader("Content-Disposition", `inline; filename="${reportName}"`);
-
-		pdfDoc.pipe(fs.createWriteStream(reportPath));
-		await pdfDoc.table(table);
-
-		pdfDoc.pipe(res);
-		pdfDoc.end();
-	} catch (error) {
-		res.status(500).send({
-			success: false,
-			message: "Internal Server Error.",
-			error: error.message,
-		});
-	}
-};
-
-//@desc: 	GENERATE REPORT FOR ALL OVERDUE TICKETS ASSIGNED TO IT SUPPORT
-//@access:	IT SUPPORT
-exports.generateReportOverdueTicketsItsupp = async (req, res) => {
-	try {
-		const assignedTickets = await Ticket.find({
-			assignTo: req.user.email,
-			status: "Overdue",
-		});
-		const reportName = `ITsupport-report-overduetickets-${moment(
-			Date.now()
-		).format("YYYYMMDD")}.pdf`;
-		const reportPath = path.join("reports", reportName);
-		const pdfDoc = new PDFDocument({ size: "A4", margin: 50 });
-
-		const table = {
-			headers: [
-				{
-					label: "TICKET NO.",
-					property: "ticketNo",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "SUBJECT",
-					property: "subject",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "REQUESTER",
-					property: "requester",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "UNIT",
-					property: "unit",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "DATE CREATED",
-					property: "createdAt",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "PRIORITY",
-					property: "priority",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-			],
-
-			datas: [
-				...assignedTickets.map(ticket => {
-					const ticketCategory = ticket.ticketCategory;
-
-					//get the initials of the ticket category
-					const initials = ticketCategory
-						.split(" ")
-						.map(word => word[0])
-						.join("");
-
-					return {
-						ticketNo: `bold:${ticket.ticketNo} - ${initials.toUpperCase()}`,
-						subject: ticket.ticketSubject,
-						requester: ticket.requester,
-						unit: ticket.clientUnit,
-						createdAt: moment(ticket.createdAt).format(
-							"MMMM Do YYYY, h:mm:ss a"
-						),
-						priority: `bold:${ticket.priority.toUpperCase()}`,
-					};
-				}),
-			],
-		};
-
-		res.setHeader("Content-Type", "application/pdf");
-		res.setHeader("Content-Disposition", `inline; filename="${reportName}"`);
-
-		pdfDoc.pipe(fs.createWriteStream(reportPath));
-		await pdfDoc.table(table);
-
-		pdfDoc.pipe(res);
-		pdfDoc.end();
-	} catch (error) {
-		res.status(500).send({
-			success: false,
-			message: "Internal Server Error.",
-			error: error.message,
-		});
-	}
-};
-
-//@desc: 	GENERATE REPORT FOR ALL VOIDED TICKETS ASSIGNED TO IT SUPPORT
-//@access:	IT SUPPORT
-exports.generateReportVoidedTicketsItsupp = async (req, res) => {
-	try {
-		const assignedTickets = await Ticket.find({
-			assignTo: req.user.email,
-			status: "Voided",
-		});
-		const reportName = `ITsupport-report-voidedtickets-${moment(
-			Date.now()
-		).format("YYYYMMDD")}.pdf`;
-		const reportPath = path.join("reports", reportName);
-		const pdfDoc = new PDFDocument({ size: "A4", margin: 50 });
-
-		const table = {
-			headers: [
-				{
-					label: "TICKET NO.",
-					property: "ticketNo",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "SUBJECT",
-					property: "subject",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "REQUESTER",
-					property: "requester",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "UNIT",
-					property: "unit",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "DATE CREATED",
-					property: "createdAt",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "PRIORITY",
-					property: "priority",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-			],
-
-			datas: [
-				...assignedTickets.map(ticket => {
-					const ticketCategory = ticket.ticketCategory;
-
-					//get the initials of the ticket category
-					const initials = ticketCategory
-						.split(" ")
-						.map(word => word[0])
-						.join("");
-
-					return {
-						ticketNo: `bold:${ticket.ticketNo} - ${initials.toUpperCase()}`,
-						subject: ticket.ticketSubject,
-						requester: ticket.requester,
-						unit: ticket.clientUnit,
-						createdAt: moment(ticket.createdAt).format(
-							"MMMM Do YYYY, h:mm:ss a"
-						),
-						priority: `bold:${ticket.priority.toUpperCase()}`,
-					};
-				}),
-			],
-		};
-
-		res.setHeader("Content-Type", "application/pdf");
-		res.setHeader("Content-Disposition", `inline; filename="${reportName}"`);
-
-		pdfDoc.pipe(fs.createWriteStream(reportPath));
-		await pdfDoc.table(table);
-
-		pdfDoc.pipe(res);
-		pdfDoc.end();
-	} catch (error) {
-		res.status(500).send({
-			success: false,
-			message: "Internal Server Error.",
-			error: error.message,
-		});
-	}
-};
-
-//@desc: 	GENERATE REPORT FOR ALL REOPENED TICKETS ASSIGNED TO IT SUPPORT
-//@access:	IT SUPPORT
-exports.generateReportReopenedTicketsItsupp = async (req, res) => {
-	try {
-		const assignedTickets = await Ticket.find({
-			assignTo: req.user.email,
-			status: "Reopened",
-		});
-		const reportName = `ITsupport-report-reopenedtickets-${moment(
-			Date.now()
-		).format("YYYYMMDD")}.pdf`;
-		const reportPath = path.join("reports", reportName);
-		const pdfDoc = new PDFDocument({ size: "A4", margin: 50 });
-
-		const table = {
-			headers: [
-				{
-					label: "TICKET NO.",
-					property: "ticketNo",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "SUBJECT",
-					property: "subject",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "REQUESTER",
-					property: "requester",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "UNIT",
-					property: "unit",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "DATE CREATED",
-					property: "createdAt",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-				{
-					label: "PRIORITY",
-					property: "priority",
-					align: "center",
-					headerAlign: "center",
-					padding: 10,
-				},
-			],
-
-			datas: [
-				...assignedTickets.map(ticket => {
-					const ticketCategory = ticket.ticketCategory;
-
-					//get the initials of the ticket category
-					const initials = ticketCategory
-						.split(" ")
-						.map(word => word[0])
-						.join("");
-
-					return {
-						ticketNo: `bold:${ticket.ticketNo} - ${initials.toUpperCase()}`,
-						subject: ticket.ticketSubject,
-						requester: ticket.requester,
-						unit: ticket.clientUnit,
-						createdAt: moment(ticket.createdAt).format(
-							"MMMM Do YYYY, h:mm:ss a"
-						),
-						priority: `bold:${ticket.priority.toUpperCase()}`,
-					};
-				}),
-			],
-		};
-
-		res.setHeader("Content-Type", "application/pdf");
-		res.setHeader("Content-Disposition", `inline; filename="${reportName}"`);
-
-		pdfDoc.pipe(fs.createWriteStream(reportPath));
-		await pdfDoc.table(table);
-
-		pdfDoc.pipe(res);
-		pdfDoc.end();
-	} catch (error) {
-		res.status(500).send({
-			success: false,
-			message: "Internal Server Error.",
-			error: error.message,
-		});
-	}
-};
+// // ---------------------REPORTS--------------------- //
+
+// //@desc:	GENERATE REPORT
+// //@access:	SUPERADMIN AND ADMIN
+// exports.generateReportAllTickets = async (req, res) => {
+// 	try {
+// 		const ticket = await Ticket.find();
+// 		const reportName = `report-alltickets-${moment(Date.now()).format(
+// 			"YYYYMMDD"
+// 		)}.pdf`;
+// 		const reportPath = path.join("reports", reportName);
+// 		const pdfDoc = new PDFDocument({ size: "A4", margin: 50 });
+
+// 		const table = {
+// 			headers: [
+// 				{
+// 					label: "TICKET NO.",
+// 					property: "ticketNo",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "SUBJECT",
+// 					property: "subject",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "REQUESTER",
+// 					property: "requester",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "UNIT",
+// 					property: "unit",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "DATE CREATED",
+// 					property: "createdAt",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "STATUS",
+// 					property: "status",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "PRIORITY",
+// 					property: "priority",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 			],
+
+// 			datas: [
+// 				...ticket.map(ticket => {
+// 					const ticketCategory = ticket.ticketCategory;
+
+// 					//get the initials of the ticket category
+// 					const initials = ticketCategory
+// 						.split(" ")
+// 						.map(word => word[0])
+// 						.join("");
+
+// 					return {
+// 						ticketNo: `bold:${ticket.ticketNo} - ${initials.toUpperCase()}`,
+// 						subject: ticket.ticketSubject,
+// 						requester: ticket.requester,
+// 						unit: ticket.clientUnit,
+// 						createdAt: moment(ticket.createdAt).format(
+// 							"MMMM Do YYYY, h:mm:ss a"
+// 						),
+// 						status: ticket.status,
+// 						priority: `bold:${ticket.priority.toUpperCase()}`,
+// 					};
+// 				}),
+// 			],
+// 		};
+
+// 		res.setHeader("Content-Type", "application/pdf");
+// 		res.setHeader("Content-Disposition", `inline; filename="${reportName}"`);
+
+// 		pdfDoc.pipe(fs.createWriteStream(reportPath));
+// 		await pdfDoc.table(table);
+
+// 		pdfDoc.pipe(res);
+// 		pdfDoc.end();
+// 	} catch (error) {
+// 		res.status(500).send({
+// 			success: false,
+// 			message: "Internal Server Error.",
+// 			error: error.message,
+// 		});
+// 	}
+// };
+
+// //@desc:	GENERATE REPORT
+// //@access:	SUPERADMIN AND ADMIN
+// exports.generateReportOpenTickets = async (req, res) => {
+// 	try {
+// 		const ticket = await Ticket.find({ status: "Open" });
+// 		const reportName = `report-opentickets-${moment(Date.now()).format(
+// 			"YYYYMMDD"
+// 		)}.pdf`;
+// 		const reportPath = path.join("reports", reportName);
+// 		const pdfDoc = new PDFDocument({ size: "A4", margin: 50 });
+
+// 		const table = {
+// 			headers: [
+// 				{
+// 					label: "TICKET NO.",
+// 					property: "ticketNo",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "SUBJECT",
+// 					property: "subject",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "REQUESTER",
+// 					property: "requester",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "UNIT",
+// 					property: "unit",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "DATE CREATED",
+// 					property: "createdAt",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "PRIORITY",
+// 					property: "priority",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 			],
+
+// 			datas: [
+// 				...ticket.map(ticket => {
+// 					const ticketCategory = ticket.ticketCategory;
+
+// 					//get the initials of the ticket category
+// 					const initials = ticketCategory
+// 						.split(" ")
+// 						.map(word => word[0])
+// 						.join("");
+
+// 					return {
+// 						ticketNo: `bold:${ticket.ticketNo} - ${initials.toUpperCase()}`,
+// 						subject: ticket.ticketSubject,
+// 						requester: ticket.requester,
+// 						unit: ticket.clientUnit,
+// 						createdAt: moment(ticket.createdAt).format(
+// 							"MMMM Do YYYY, h:mm:ss a"
+// 						),
+// 						priority: `bold:${ticket.priority.toUpperCase()}`,
+// 					};
+// 				}),
+// 			],
+// 		};
+// 		res.setHeader("Content-Type", "application/pdf");
+// 		res.setHeader("Content-Disposition", `inline; filename="${reportName}"`);
+
+// 		pdfDoc.pipe(fs.createWriteStream(reportPath));
+// 		await pdfDoc.table(table);
+
+// 		pdfDoc.pipe(res);
+// 		pdfDoc.end();
+// 	} catch (error) {
+// 		res.status(500).send({
+// 			success: false,
+// 			message: "Internal Server Error.",
+// 			error: error.message,
+// 		});
+// 	}
+// };
+
+// //@desc:	GENERATE REPORT
+// //@access:	SUPERADMIN AND ADMIN
+// exports.generateReportResolvedTickets = async (req, res) => {
+// 	try {
+// 		const ticket = await Ticket.find({ status: "Resolved" });
+// 		const reportName = `report-resolvedtickets-${moment(Date.now()).format(
+// 			"YYYYMMDD"
+// 		)}.pdf`;
+// 		const reportPath = path.join("reports", reportName);
+// 		const pdfDoc = new PDFDocument({ size: "A4", margin: 50 });
+
+// 		const table = {
+// 			headers: [
+// 				{
+// 					label: "TICKET NO.",
+// 					property: "ticketNo",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "SUBJECT",
+// 					property: "subject",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "REQUESTER",
+// 					property: "requester",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "UNIT",
+// 					property: "unit",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "DATE CREATED",
+// 					property: "createdAt",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "PRIORITY",
+// 					property: "priority",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 			],
+
+// 			datas: [
+// 				...ticket.map(ticket => {
+// 					const ticketCategory = ticket.ticketCategory;
+
+// 					//get the initials of the ticket category
+// 					const initials = ticketCategory
+// 						.split(" ")
+// 						.map(word => word[0])
+// 						.join("");
+
+// 					return {
+// 						ticketNo: `bold:${ticket.ticketNo} - ${initials.toUpperCase()}`,
+// 						subject: ticket.ticketSubject,
+// 						requester: ticket.requester,
+// 						unit: ticket.clientUnit,
+// 						createdAt: moment(ticket.createdAt).format(
+// 							"MMMM Do YYYY, h:mm:ss a"
+// 						),
+// 						priority: `bold:${ticket.priority.toUpperCase()}`,
+// 					};
+// 				}),
+// 			],
+// 		};
+// 		res.setHeader("Content-Type", "application/pdf");
+// 		res.setHeader("Content-Disposition", `inline; filename="${reportName}"`);
+
+// 		pdfDoc.pipe(fs.createWriteStream(reportPath));
+// 		await pdfDoc.table(table);
+
+// 		pdfDoc.pipe(res);
+// 		pdfDoc.end();
+// 	} catch (error) {
+// 		res.status(500).send({
+// 			success: false,
+// 			message: "Internal Server Error.",
+// 			error: error.message,
+// 		});
+// 	}
+// };
+
+// //@desc:	GENERATE REPORT
+// //@access:	SUPERADMIN AND ADMIN
+// exports.generateReportOverdueTickets = async (req, res) => {
+// 	try {
+// 		const ticket = await Ticket.find({ status: "Overdue" });
+// 		const reportName = `report-overduetickets-${moment(Date.now()).format(
+// 			"YYYYMMDD"
+// 		)}.pdf`;
+// 		const reportPath = path.join("reports", reportName);
+// 		const pdfDoc = new PDFDocument({ size: "A4", margin: 50 });
+
+// 		const table = {
+// 			headers: [
+// 				{
+// 					label: "TICKET NO.",
+// 					property: "ticketNo",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "SUBJECT",
+// 					property: "subject",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "REQUESTER",
+// 					property: "requester",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "UNIT",
+// 					property: "unit",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "DATE CREATED",
+// 					property: "createdAt",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "PRIORITY",
+// 					property: "priority",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 			],
+
+// 			datas: [
+// 				...ticket.map(ticket => {
+// 					const ticketCategory = ticket.ticketCategory;
+
+// 					//get the initials of the ticket category
+// 					const initials = ticketCategory
+// 						.split(" ")
+// 						.map(word => word[0])
+// 						.join("");
+
+// 					return {
+// 						ticketNo: `bold:${ticket.ticketNo} - ${initials.toUpperCase()}`,
+// 						subject: ticket.ticketSubject,
+// 						requester: ticket.requester,
+// 						unit: ticket.clientUnit,
+// 						createdAt: moment(ticket.createdAt).format(
+// 							"MMMM Do YYYY, h:mm:ss a"
+// 						),
+// 						priority: `bold:${ticket.priority.toUpperCase()}`,
+// 					};
+// 				}),
+// 			],
+// 		};
+// 		res.setHeader("Content-Type", "application/pdf");
+// 		res.setHeader("Content-Disposition", `inline; filename="${reportName}"`);
+
+// 		pdfDoc.pipe(fs.createWriteStream(reportPath));
+// 		await pdfDoc.table(table);
+
+// 		pdfDoc.pipe(res);
+// 		pdfDoc.end();
+// 	} catch (error) {
+// 		res.status(500).send({
+// 			success: false,
+// 			message: "Internal Server Error.",
+// 			error: error.message,
+// 		});
+// 	}
+// };
+
+// //@desc:	GENERATE REPORT
+// //@access:	SUPERADMIN AND ADMIN
+// exports.generateReportRejectedTickets = async (req, res) => {
+// 	try {
+// 		const ticket = await Ticket.find({ status: "Rejected" });
+// 		const reportName = `report-overduetickets-${moment(Date.now()).format(
+// 			"YYYYMMDD"
+// 		)}.pdf`;
+// 		const reportPath = path.join("reports", reportName);
+// 		const pdfDoc = new PDFDocument({ size: "A4", margin: 50 });
+
+// 		const table = {
+// 			headers: [
+// 				{
+// 					label: "TICKET NO.",
+// 					property: "ticketNo",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "SUBJECT",
+// 					property: "subject",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "REQUESTER",
+// 					property: "requester",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "UNIT",
+// 					property: "unit",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "DATE CREATED",
+// 					property: "createdAt",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "PRIORITY",
+// 					property: "priority",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 			],
+
+// 			datas: [
+// 				...ticket.map(ticket => {
+// 					const ticketCategory = ticket.ticketCategory;
+
+// 					//get the initials of the ticket category
+// 					const initials = ticketCategory
+// 						.split(" ")
+// 						.map(word => word[0])
+// 						.join("");
+
+// 					return {
+// 						ticketNo: `bold:${ticket.ticketNo} - ${initials.toUpperCase()}`,
+// 						subject: ticket.ticketSubject,
+// 						requester: ticket.requester,
+// 						unit: ticket.clientUnit,
+// 						createdAt: moment(ticket.createdAt).format(
+// 							"MMMM Do YYYY, h:mm:ss a"
+// 						),
+// 						priority: `bold:${ticket.priority.toUpperCase()}`,
+// 					};
+// 				}),
+// 			],
+// 		};
+// 		res.setHeader("Content-Type", "application/pdf");
+// 		res.setHeader("Content-Disposition", `inline; filename="${reportName}"`);
+
+// 		pdfDoc.pipe(fs.createWriteStream(reportPath));
+// 		await pdfDoc.table(table);
+
+// 		pdfDoc.pipe(res);
+// 		pdfDoc.end();
+// 	} catch (error) {
+// 		res.status(500).send({
+// 			success: false,
+// 			message: "Internal Server Error.",
+// 			error: error.message,
+// 		});
+// 	}
+// };
+
+// //@desc: 	GENERATE REPORT
+// //@access:	SUPERADMIN AND ADMIN
+// exports.generateReportVoidedTickets = async (req, res) => {
+// 	try {
+// 		const ticket = await Ticket.find({ status: "Voided" });
+// 		const reportName = `report-overduetickets-${moment(Date.now()).format(
+// 			"YYYYMMDD"
+// 		)}.pdf`;
+// 		const reportPath = path.join("reports", reportName);
+// 		const pdfDoc = new PDFDocument({ size: "A4", margin: 50 });
+
+// 		const table = {
+// 			headers: [
+// 				{
+// 					label: "TICKET NO.",
+// 					property: "ticketNo",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "SUBJECT",
+// 					property: "subject",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "REQUESTER",
+// 					property: "requester",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "UNIT",
+// 					property: "unit",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "DATE CREATED",
+// 					property: "createdAt",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "PRIORITY",
+// 					property: "priority",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 			],
+
+// 			datas: [
+// 				...ticket.map(ticket => {
+// 					const ticketCategory = ticket.ticketCategory;
+
+// 					//get the initials of the ticket category
+// 					const initials = ticketCategory
+// 						.split(" ")
+// 						.map(word => word[0])
+// 						.join("");
+
+// 					return {
+// 						ticketNo: `bold:${ticket.ticketNo} - ${initials.toUpperCase()}`,
+// 						subject: ticket.ticketSubject,
+// 						requester: ticket.requester,
+// 						unit: ticket.clientUnit,
+// 						createdAt: moment(ticket.createdAt).format(
+// 							"MMMM Do YYYY, h:mm:ss a"
+// 						),
+// 						priority: `bold:${ticket.priority.toUpperCase()}`,
+// 					};
+// 				}),
+// 			],
+// 		};
+// 		res.setHeader("Content-Type", "application/pdf");
+// 		res.setHeader("Content-Disposition", `inline; filename="${reportName}"`);
+
+// 		pdfDoc.pipe(fs.createWriteStream(reportPath));
+// 		await pdfDoc.table(table);
+
+// 		pdfDoc.pipe(res);
+// 		pdfDoc.end();
+// 	} catch (error) {
+// 		res.status(500).send({
+// 			success: false,
+// 			message: "Internal Server Error.",
+// 			error: error.message,
+// 		});
+// 	}
+// };
+
+// //@desc: 	GENERATE REPORT
+// //@access:	SUPERADMIN AND ADMIN
+// exports.generateReportReopenedTickets = async (req, res) => {
+// 	try {
+// 		const ticket = await Ticket.find({ status: "Reopened" });
+// 		const reportName = `report-overduetickets-${moment(Date.now()).format(
+// 			"YYYYMMDD"
+// 		)}.pdf`;
+// 		const reportPath = path.join("reports", reportName);
+// 		const pdfDoc = new PDFDocument({ size: "A4", margin: 50 });
+
+// 		const table = {
+// 			headers: [
+// 				{
+// 					label: "TICKET NO.",
+// 					property: "ticketNo",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "SUBJECT",
+// 					property: "subject",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "REQUESTER",
+// 					property: "requester",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "UNIT",
+// 					property: "unit",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "DATE CREATED",
+// 					property: "createdAt",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "PRIORITY",
+// 					property: "priority",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 			],
+
+// 			datas: [
+// 				...ticket.map(ticket => {
+// 					const ticketCategory = ticket.ticketCategory;
+
+// 					//get the initials of the ticket category
+// 					const initials = ticketCategory
+// 						.split(" ")
+// 						.map(word => word[0])
+// 						.join("");
+
+// 					return {
+// 						ticketNo: `bold:${ticket.ticketNo} - ${initials.toUpperCase()}`,
+// 						subject: ticket.ticketSubject,
+// 						requester: ticket.requester,
+// 						unit: ticket.clientUnit,
+// 						createdAt: moment(ticket.createdAt).format(
+// 							"MMMM Do YYYY, h:mm:ss a"
+// 						),
+// 						priority: `bold:${ticket.priority.toUpperCase()}`,
+// 					};
+// 				}),
+// 			],
+// 		};
+// 		res.setHeader("Content-Type", "application/pdf");
+// 		res.setHeader("Content-Disposition", `inline; filename="${reportName}"`);
+
+// 		pdfDoc.pipe(fs.createWriteStream(reportPath));
+// 		await pdfDoc.table(table);
+
+// 		pdfDoc.pipe(res);
+// 		pdfDoc.end();
+// 	} catch (error) {
+// 		res.status(500).send({
+// 			success: false,
+// 			message: "Internal Server Error.",
+// 			error: error.message,
+// 		});
+// 	}
+// };
+
+// // --------------------- REPORTS FOR HELPDESKSUPPORT --------------------- //
+
+// //@desc: 	GENERATE REPORT FOR ALL TICKETS ASSIGNED TO HELPDESK SUPPORT
+// //@access:	CLEKRHELPDESK SUPPORT
+// exports.generateReportAllTicketsHelpdesk = async (req, res) => {
+// 	try {
+// 		const assignedTickets = await Ticket.find({ assignTo: req.user.email });
+// 		const reportName = `Helpdesk-report-alltickets-${moment(Date.now()).format(
+// 			"YYYYMMDD"
+// 		)}.pdf`;
+// 		const reportPath = path.join("reports", reportName);
+// 		const pdfDoc = new PDFDocument({ size: "A4", margin: 50 });
+
+// 		const table = {
+// 			headers: [
+// 				{
+// 					label: "TICKET NO.",
+// 					property: "ticketNo",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "SUBJECT",
+// 					property: "subject",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "REQUESTER",
+// 					property: "requester",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "UNIT",
+// 					property: "unit",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "DATE CREATED",
+// 					property: "createdAt",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "STATUS",
+// 					property: "status",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "PRIORITY",
+// 					property: "priority",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 			],
+
+// 			datas: [
+// 				...assignedTickets.map(ticket => {
+// 					const ticketCategory = ticket.ticketCategory;
+
+// 					//get the initials of the ticket category
+// 					const initials = ticketCategory
+// 						.split(" ")
+// 						.map(word => word[0])
+// 						.join("");
+
+// 					return {
+// 						ticketNo: `bold:${ticket.ticketNo} - ${initials.toUpperCase()}`,
+// 						subject: ticket.ticketSubject,
+// 						requester: ticket.requester,
+// 						unit: ticket.clientUnit,
+// 						createdAt: moment(ticket.createdAt).format(
+// 							"MMMM Do YYYY, h:mm:ss a"
+// 						),
+// 						status: ticket.status,
+// 						priority: `bold:${ticket.priority.toUpperCase()}`,
+// 					};
+// 				}),
+// 			],
+// 		};
+
+// 		res.setHeader("Content-Type", "application/pdf");
+// 		res.setHeader("Content-Disposition", `inline; filename="${reportName}"`);
+
+// 		pdfDoc.pipe(fs.createWriteStream(reportPath));
+// 		await pdfDoc.table(table);
+
+// 		pdfDoc.pipe(res);
+// 		pdfDoc.end();
+// 	} catch (error) {
+// 		res.status(500).send({
+// 			success: false,
+// 			message: "Internal Server Error.",
+// 			error: error.message,
+// 		});
+// 	}
+// };
+
+// //@desc: 	GENERATE REPORT FOR ALL OPEN TICKETS ASSIGNED TO HELPDESK SUPPORT
+// //@access:	CLEKRHELPDESK SUPPORT
+// exports.generateReportOpenTicketsHelpdesk = async (req, res) => {
+// 	try {
+// 		const assignedTickets = await Ticket.find({
+// 			assignTo: req.user.email,
+// 			status: "Open",
+// 		});
+// 		const reportName = `Helpdesk-report-opentickets-${moment(Date.now()).format(
+// 			"YYYYMMDD"
+// 		)}.pdf`;
+// 		const reportPath = path.join("reports", reportName);
+// 		const pdfDoc = new PDFDocument({ size: "A4", margin: 50 });
+
+// 		const table = {
+// 			headers: [
+// 				{
+// 					label: "TICKET NO.",
+// 					property: "ticketNo",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "SUBJECT",
+// 					property: "subject",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "REQUESTER",
+// 					property: "requester",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "UNIT",
+// 					property: "unit",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "DATE CREATED",
+// 					property: "createdAt",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "PRIORITY",
+// 					property: "priority",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 			],
+
+// 			datas: [
+// 				...assignedTickets.map(ticket => {
+// 					const ticketCategory = ticket.ticketCategory;
+
+// 					//get the initials of the ticket category
+// 					const initials = ticketCategory
+// 						.split(" ")
+// 						.map(word => word[0])
+// 						.join("");
+
+// 					return {
+// 						ticketNo: `bold:${ticket.ticketNo} - ${initials.toUpperCase()}`,
+// 						subject: ticket.ticketSubject,
+// 						requester: ticket.requester,
+// 						unit: ticket.clientUnit,
+// 						createdAt: moment(ticket.createdAt).format(
+// 							"MMMM Do YYYY, h:mm:ss a"
+// 						),
+// 						priority: `bold:${ticket.priority.toUpperCase()}`,
+// 					};
+// 				}),
+// 			],
+// 		};
+// 		res.setHeader("Content-Type", "application/pdf");
+// 		res.setHeader("Content-Disposition", `inline; filename="${reportName}"`);
+
+// 		pdfDoc.pipe(fs.createWriteStream(reportPath));
+// 		await pdfDoc.table(table);
+
+// 		pdfDoc.pipe(res);
+// 		pdfDoc.end();
+// 	} catch (error) {
+// 		res.status(500).send({
+// 			success: false,
+// 			message: "Internal Server Error.",
+// 			error: error.message,
+// 		});
+// 	}
+// };
+
+// //@desc: 	GENERATE REPORT FOR ALL RESOLVED TICKETS ASSIGNED TO HELPDESK SUPPORT
+// //@access:	CLEKRHELPDESK SUPPORT
+// exports.generateReportResolvedTicketsHelpdesk = async (req, res) => {
+// 	try {
+// 		const assignedTickets = await Ticket.find({
+// 			assignTo: req.user.email,
+// 			status: "Resolved",
+// 		});
+// 		const reportName = `Helpdesk-report-resolvedtickets-${moment(
+// 			Date.now()
+// 		).format("YYYYMMDD")}.pdf`;
+// 		const reportPath = path.join("reports", reportName);
+// 		const pdfDoc = new PDFDocument({ size: "A4", margin: 50 });
+
+// 		const table = {
+// 			headers: [
+// 				{
+// 					label: "TICKET NO.",
+// 					property: "ticketNo",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "SUBJECT",
+// 					property: "subject",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "REQUESTER",
+// 					property: "requester",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "UNIT",
+// 					property: "unit",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "DATE CREATED",
+// 					property: "createdAt",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "PRIORITY",
+// 					property: "priority",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 			],
+
+// 			datas: [
+// 				...assignedTickets.map(ticket => {
+// 					const ticketCategory = ticket.ticketCategory;
+
+// 					//get the initials of the ticket category
+// 					const initials = ticketCategory
+// 						.split(" ")
+// 						.map(word => word[0])
+// 						.join("");
+
+// 					return {
+// 						ticketNo: `bold:${ticket.ticketNo} - ${initials.toUpperCase()}`,
+// 						subject: ticket.ticketSubject,
+// 						requester: ticket.requester,
+// 						unit: ticket.clientUnit,
+// 						createdAt: moment(ticket.createdAt).format(
+// 							"MMMM Do YYYY, h:mm:ss a"
+// 						),
+// 						priority: `bold:${ticket.priority.toUpperCase()}`,
+// 					};
+// 				}),
+// 			],
+// 		};
+// 		res.setHeader("Content-Type", "application/pdf");
+// 		res.setHeader("Content-Disposition", `inline; filename="${reportName}"`);
+
+// 		pdfDoc.pipe(fs.createWriteStream(reportPath));
+// 		await pdfDoc.table(table);
+
+// 		pdfDoc.pipe(res);
+// 		pdfDoc.end();
+// 	} catch (error) {
+// 		res.status(500).send({
+// 			success: false,
+// 			message: "Internal Server Error.",
+// 			error: error.message,
+// 		});
+// 	}
+// };
+
+// //@desc: 	GENERATE REPORT FOR ALL OVERDUE TICKETS ASSIGNED TO HELPDESK SUPPORT
+// //@access:	CLEKRHELPDESK SUPPORT
+// exports.generateReportOverdueTicketsHelpdesk = async (req, res) => {
+// 	try {
+// 		const assignedTickets = await Ticket.find({
+// 			assignTo: req.user.email,
+// 			status: "Overdue",
+// 		});
+// 		const reportName = `Helpdesk-report-overduetickets-${moment(
+// 			Date.now()
+// 		).format("YYYYMMDD")}.pdf`;
+// 		const reportPath = path.join("reports", reportName);
+// 		const pdfDoc = new PDFDocument({ size: "A4", margin: 50 });
+
+// 		const table = {
+// 			headers: [
+// 				{
+// 					label: "TICKET NO.",
+// 					property: "ticketNo",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "SUBJECT",
+// 					property: "subject",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "REQUESTER",
+// 					property: "requester",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "UNIT",
+// 					property: "unit",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "DATE CREATED",
+// 					property: "createdAt",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "PRIORITY",
+// 					property: "priority",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 			],
+
+// 			datas: [
+// 				...assignedTickets.map(ticket => {
+// 					const ticketCategory = ticket.ticketCategory;
+
+// 					//get the initials of the ticket category
+// 					const initials = ticketCategory
+// 						.split(" ")
+// 						.map(word => word[0])
+// 						.join("");
+
+// 					return {
+// 						ticketNo: `bold:${ticket.ticketNo} - ${initials.toUpperCase()}`,
+// 						subject: ticket.ticketSubject,
+// 						requester: ticket.requester,
+// 						unit: ticket.clientUnit,
+// 						createdAt: moment(ticket.createdAt).format(
+// 							"MMMM Do YYYY, h:mm:ss a"
+// 						),
+// 						priority: `bold:${ticket.priority.toUpperCase()}`,
+// 					};
+// 				}),
+// 			],
+// 		};
+// 		res.setHeader("Content-Type", "application/pdf");
+// 		res.setHeader("Content-Disposition", `inline; filename="${reportName}"`);
+
+// 		pdfDoc.pipe(fs.createWriteStream(reportPath));
+// 		await pdfDoc.table(table);
+
+// 		pdfDoc.pipe(res);
+// 		pdfDoc.end();
+// 	} catch (error) {
+// 		res.status(500).send({
+// 			success: false,
+// 			message: "Internal Server Error.",
+// 			error: error.message,
+// 		});
+// 	}
+// };
+
+// //@desc: 	GENERATE REPORT FOR ALL REJECTED TICKETS ASSIGNED TO HELPDESK SUPPORT
+// //@access:	CLEKRHELPDESK SUPPORT
+// exports.generateReportRejectedTicketsHelpdesk = async (req, res) => {
+// 	try {
+// 		const assignedTickets = await Ticket.find({
+// 			assignTo: req.user.email,
+// 			status: "Rejected",
+// 		});
+// 		const reportName = `Helpdesk-report-rejectedtickets-${moment(
+// 			Date.now()
+// 		).format("YYYYMMDD")}.pdf`;
+// 		const reportPath = path.join("reports", reportName);
+// 		const pdfDoc = new PDFDocument({ size: "A4", margin: 50 });
+
+// 		const table = {
+// 			headers: [
+// 				{
+// 					label: "TICKET NO.",
+// 					property: "ticketNo",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "SUBJECT",
+// 					property: "subject",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "REQUESTER",
+// 					property: "requester",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "UNIT",
+// 					property: "unit",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "DATE CREATED",
+// 					property: "createdAt",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "PRIORITY",
+// 					property: "priority",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 			],
+
+// 			datas: [
+// 				...assignedTickets.map(ticket => {
+// 					const ticketCategory = ticket.ticketCategory;
+
+// 					//get the initials of the ticket category
+// 					const initials = ticketCategory
+// 						.split(" ")
+// 						.map(word => word[0])
+// 						.join("");
+
+// 					return {
+// 						ticketNo: `bold:${ticket.ticketNo} - ${initials.toUpperCase()}`,
+// 						subject: ticket.ticketSubject,
+// 						requester: ticket.requester,
+// 						unit: ticket.clientUnit,
+// 						createdAt: moment(ticket.createdAt).format(
+// 							"MMMM Do YYYY, h:mm:ss a"
+// 						),
+// 						priority: `bold:${ticket.priority.toUpperCase()}`,
+// 					};
+// 				}),
+// 			],
+// 		};
+// 		res.setHeader("Content-Type", "application/pdf");
+// 		res.setHeader("Content-Disposition", `inline; filename="${reportName}"`);
+
+// 		pdfDoc.pipe(fs.createWriteStream(reportPath));
+// 		await pdfDoc.table(table);
+
+// 		pdfDoc.pipe(res);
+// 		pdfDoc.end();
+// 	} catch (error) {
+// 		res.status(500).send({
+// 			success: false,
+// 			message: "Internal Server Error.",
+// 			error: error.message,
+// 		});
+// 	}
+// };
+
+// //@desc: 	GENERATE REPORT FOR ALL REOPENED TICKETS ASSIGNED TO HELPDESK SUPPORT
+// //@access:	CLEKRHELPDESK SUPPORT
+// exports.generateReportRoepenedTicketsHelpdesk = async (req, res) => {
+// 	try {
+// 		const assignedTickets = await Ticket.find({
+// 			assignTo: req.user.email,
+// 			status: "Reopened",
+// 		});
+// 		const reportName = `Helpdesk-report-reopenedtickets-${moment(
+// 			Date.now()
+// 		).format("YYYYMMDD")}.pdf`;
+// 		const reportPath = path.join("reports", reportName);
+// 		const pdfDoc = new PDFDocument({ size: "A4", margin: 50 });
+
+// 		const table = {
+// 			headers: [
+// 				{
+// 					label: "TICKET NO.",
+// 					property: "ticketNo",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "SUBJECT",
+// 					property: "subject",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "REQUESTER",
+// 					property: "requester",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "UNIT",
+// 					property: "unit",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "DATE CREATED",
+// 					property: "createdAt",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "PRIORITY",
+// 					property: "priority",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 			],
+
+// 			datas: [
+// 				...assignedTickets.map(ticket => {
+// 					const ticketCategory = ticket.ticketCategory;
+
+// 					//get the initials of the ticket category
+// 					const initials = ticketCategory
+// 						.split(" ")
+// 						.map(word => word[0])
+// 						.join("");
+
+// 					return {
+// 						ticketNo: `bold:${ticket.ticketNo} - ${initials.toUpperCase()}`,
+// 						subject: ticket.ticketSubject,
+// 						requester: ticket.requester,
+// 						unit: ticket.clientUnit,
+// 						createdAt: moment(ticket.createdAt).format(
+// 							"MMMM Do YYYY, h:mm:ss a"
+// 						),
+// 						priority: `bold:${ticket.priority.toUpperCase()}`,
+// 					};
+// 				}),
+// 			],
+// 		};
+// 		res.setHeader("Content-Type", "application/pdf");
+// 		res.setHeader("Content-Disposition", `inline; filename="${reportName}"`);
+
+// 		pdfDoc.pipe(fs.createWriteStream(reportPath));
+// 		await pdfDoc.table(table);
+
+// 		pdfDoc.pipe(res);
+// 		pdfDoc.end();
+// 	} catch (error) {
+// 		res.status(500).send({
+// 			success: false,
+// 			message: "Internal Server Error.",
+// 			error: error.message,
+// 		});
+// 	}
+// };
+
+// // --------------------- REPORTS FOR ITSUPPORT --------------------- //
+
+// //@desc: 	GENERATE REPORT FOR ALL TICKETS ASSIGNED TO IT SUPPORT
+// //@access:	IT SUPPORT
+// exports.generateReportAllTicketsItsupp = async (req, res) => {
+// 	try {
+// 		const assignedTickets = await Ticket.find({ assignTo: req.user.email });
+// 		const reportName = `ITsupport-report-alltickets-${moment(Date.now()).format(
+// 			"YYYYMMDD"
+// 		)}.pdf`;
+// 		const reportPath = path.join("reports", reportName);
+// 		const pdfDoc = new PDFDocument({ size: "A4", margin: 50 });
+
+// 		const table = {
+// 			headers: [
+// 				{
+// 					label: "TICKET NO.",
+// 					property: "ticketNo",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "SUBJECT",
+// 					property: "subject",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "REQUESTER",
+// 					property: "requester",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "UNIT",
+// 					property: "unit",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "DATE CREATED",
+// 					property: "createdAt",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "STATUS",
+// 					property: "status",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "PRIORITY",
+// 					property: "priority",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 			],
+
+// 			datas: [
+// 				...assignedTickets.map(ticket => {
+// 					const ticketCategory = ticket.ticketCategory;
+
+// 					//get the initials of the ticket category
+// 					const initials = ticketCategory
+// 						.split(" ")
+// 						.map(word => word[0])
+// 						.join("");
+
+// 					return {
+// 						ticketNo: `bold:${ticket.ticketNo} - ${initials.toUpperCase()}`,
+// 						subject: ticket.ticketSubject,
+// 						requester: ticket.requester,
+// 						unit: ticket.clientUnit,
+// 						createdAt: moment(ticket.createdAt).format(
+// 							"MMMM Do YYYY, h:mm:ss a"
+// 						),
+// 						status: ticket.status,
+// 						priority: `bold:${ticket.priority.toUpperCase()}`,
+// 					};
+// 				}),
+// 			],
+// 		};
+
+// 		res.setHeader("Content-Type", "application/pdf");
+// 		res.setHeader("Content-Disposition", `inline; filename="${reportName}"`);
+
+// 		pdfDoc.pipe(fs.createWriteStream(reportPath));
+// 		await pdfDoc.table(table);
+
+// 		pdfDoc.pipe(res);
+// 		pdfDoc.end();
+// 	} catch (error) {
+// 		res.status(500).send({
+// 			success: false,
+// 			message: "Internal Server Error.",
+// 			error: error.message,
+// 		});
+// 	}
+// };
+
+// //@desc: 	GENERATE REPORT FOR ALL OPEN TICKETS ASSIGNED TO IT SUPPORT
+// //@access:	IT SUPPORT
+// exports.generateReportOpenTicketsItsupp = async (req, res) => {
+// 	try {
+// 		const assignedTickets = await Ticket.find({
+// 			assignTo: req.user.email,
+// 			status: "Open",
+// 		});
+// 		const reportName = `ITsupport-report-alltickets-${moment(Date.now()).format(
+// 			"YYYYMMDD"
+// 		)}.pdf`;
+// 		const reportPath = path.join("reports", reportName);
+// 		const pdfDoc = new PDFDocument({ size: "A4", margin: 50 });
+
+// 		const table = {
+// 			headers: [
+// 				{
+// 					label: "TICKET NO.",
+// 					property: "ticketNo",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "SUBJECT",
+// 					property: "subject",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "REQUESTER",
+// 					property: "requester",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "UNIT",
+// 					property: "unit",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "DATE CREATED",
+// 					property: "createdAt",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "PRIORITY",
+// 					property: "priority",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 			],
+
+// 			datas: [
+// 				...assignedTickets.map(ticket => {
+// 					const ticketCategory = ticket.ticketCategory;
+
+// 					//get the initials of the ticket category
+// 					const initials = ticketCategory
+// 						.split(" ")
+// 						.map(word => word[0])
+// 						.join("");
+
+// 					return {
+// 						ticketNo: `bold:${ticket.ticketNo} - ${initials.toUpperCase()}`,
+// 						subject: ticket.ticketSubject,
+// 						requester: ticket.requester,
+// 						unit: ticket.clientUnit,
+// 						createdAt: moment(ticket.createdAt).format(
+// 							"MMMM Do YYYY, h:mm:ss a"
+// 						),
+// 						priority: `bold:${ticket.priority.toUpperCase()}`,
+// 					};
+// 				}),
+// 			],
+// 		};
+
+// 		res.setHeader("Content-Type", "application/pdf");
+// 		res.setHeader("Content-Disposition", `inline; filename="${reportName}"`);
+
+// 		pdfDoc.pipe(fs.createWriteStream(reportPath));
+// 		await pdfDoc.table(table);
+
+// 		pdfDoc.pipe(res);
+// 		pdfDoc.end();
+// 	} catch (error) {
+// 		res.status(500).send({
+// 			success: false,
+// 			message: "Internal Server Error.",
+// 			error: error.message,
+// 		});
+// 	}
+// };
+
+// //@desc: 	GENERATE REPORT FOR ALL RESOLVED TICKETS ASSIGNED TO IT SUPPORT
+// //@access:	IT SUPPORT
+// exports.generateReportResolvedTicketsItsupp = async (req, res) => {
+// 	try {
+// 		const assignedTickets = await Ticket.find({
+// 			assignTo: req.user.email,
+// 			status: "Resolved",
+// 		});
+// 		const reportName = `ITsupport-report-resolvedtickets-${moment(
+// 			Date.now()
+// 		).format("YYYYMMDD")}.pdf`;
+// 		const reportPath = path.join("reports", reportName);
+// 		const pdfDoc = new PDFDocument({ size: "A4", margin: 50 });
+
+// 		const table = {
+// 			headers: [
+// 				{
+// 					label: "TICKET NO.",
+// 					property: "ticketNo",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "SUBJECT",
+// 					property: "subject",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "REQUESTER",
+// 					property: "requester",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "UNIT",
+// 					property: "unit",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "DATE CREATED",
+// 					property: "createdAt",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "PRIORITY",
+// 					property: "priority",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 			],
+
+// 			datas: [
+// 				...assignedTickets.map(ticket => {
+// 					const ticketCategory = ticket.ticketCategory;
+
+// 					//get the initials of the ticket category
+// 					const initials = ticketCategory
+// 						.split(" ")
+// 						.map(word => word[0])
+// 						.join("");
+
+// 					return {
+// 						ticketNo: `bold:${ticket.ticketNo} - ${initials.toUpperCase()}`,
+// 						subject: ticket.ticketSubject,
+// 						requester: ticket.requester,
+// 						unit: ticket.clientUnit,
+// 						createdAt: moment(ticket.createdAt).format(
+// 							"MMMM Do YYYY, h:mm:ss a"
+// 						),
+// 						priority: `bold:${ticket.priority.toUpperCase()}`,
+// 					};
+// 				}),
+// 			],
+// 		};
+
+// 		res.setHeader("Content-Type", "application/pdf");
+// 		res.setHeader("Content-Disposition", `inline; filename="${reportName}"`);
+
+// 		pdfDoc.pipe(fs.createWriteStream(reportPath));
+// 		await pdfDoc.table(table);
+
+// 		pdfDoc.pipe(res);
+// 		pdfDoc.end();
+// 	} catch (error) {
+// 		res.status(500).send({
+// 			success: false,
+// 			message: "Internal Server Error.",
+// 			error: error.message,
+// 		});
+// 	}
+// };
+
+// //@desc: 	GENERATE REPORT FOR ALL OVERDUE TICKETS ASSIGNED TO IT SUPPORT
+// //@access:	IT SUPPORT
+// exports.generateReportOverdueTicketsItsupp = async (req, res) => {
+// 	try {
+// 		const assignedTickets = await Ticket.find({
+// 			assignTo: req.user.email,
+// 			status: "Overdue",
+// 		});
+// 		const reportName = `ITsupport-report-overduetickets-${moment(
+// 			Date.now()
+// 		).format("YYYYMMDD")}.pdf`;
+// 		const reportPath = path.join("reports", reportName);
+// 		const pdfDoc = new PDFDocument({ size: "A4", margin: 50 });
+
+// 		const table = {
+// 			headers: [
+// 				{
+// 					label: "TICKET NO.",
+// 					property: "ticketNo",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "SUBJECT",
+// 					property: "subject",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "REQUESTER",
+// 					property: "requester",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "UNIT",
+// 					property: "unit",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "DATE CREATED",
+// 					property: "createdAt",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "PRIORITY",
+// 					property: "priority",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 			],
+
+// 			datas: [
+// 				...assignedTickets.map(ticket => {
+// 					const ticketCategory = ticket.ticketCategory;
+
+// 					//get the initials of the ticket category
+// 					const initials = ticketCategory
+// 						.split(" ")
+// 						.map(word => word[0])
+// 						.join("");
+
+// 					return {
+// 						ticketNo: `bold:${ticket.ticketNo} - ${initials.toUpperCase()}`,
+// 						subject: ticket.ticketSubject,
+// 						requester: ticket.requester,
+// 						unit: ticket.clientUnit,
+// 						createdAt: moment(ticket.createdAt).format(
+// 							"MMMM Do YYYY, h:mm:ss a"
+// 						),
+// 						priority: `bold:${ticket.priority.toUpperCase()}`,
+// 					};
+// 				}),
+// 			],
+// 		};
+
+// 		res.setHeader("Content-Type", "application/pdf");
+// 		res.setHeader("Content-Disposition", `inline; filename="${reportName}"`);
+
+// 		pdfDoc.pipe(fs.createWriteStream(reportPath));
+// 		await pdfDoc.table(table);
+
+// 		pdfDoc.pipe(res);
+// 		pdfDoc.end();
+// 	} catch (error) {
+// 		res.status(500).send({
+// 			success: false,
+// 			message: "Internal Server Error.",
+// 			error: error.message,
+// 		});
+// 	}
+// };
+
+// //@desc: 	GENERATE REPORT FOR ALL VOIDED TICKETS ASSIGNED TO IT SUPPORT
+// //@access:	IT SUPPORT
+// exports.generateReportVoidedTicketsItsupp = async (req, res) => {
+// 	try {
+// 		const assignedTickets = await Ticket.find({
+// 			assignTo: req.user.email,
+// 			status: "Voided",
+// 		});
+// 		const reportName = `ITsupport-report-voidedtickets-${moment(
+// 			Date.now()
+// 		).format("YYYYMMDD")}.pdf`;
+// 		const reportPath = path.join("reports", reportName);
+// 		const pdfDoc = new PDFDocument({ size: "A4", margin: 50 });
+
+// 		const table = {
+// 			headers: [
+// 				{
+// 					label: "TICKET NO.",
+// 					property: "ticketNo",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "SUBJECT",
+// 					property: "subject",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "REQUESTER",
+// 					property: "requester",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "UNIT",
+// 					property: "unit",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "DATE CREATED",
+// 					property: "createdAt",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "PRIORITY",
+// 					property: "priority",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 			],
+
+// 			datas: [
+// 				...assignedTickets.map(ticket => {
+// 					const ticketCategory = ticket.ticketCategory;
+
+// 					//get the initials of the ticket category
+// 					const initials = ticketCategory
+// 						.split(" ")
+// 						.map(word => word[0])
+// 						.join("");
+
+// 					return {
+// 						ticketNo: `bold:${ticket.ticketNo} - ${initials.toUpperCase()}`,
+// 						subject: ticket.ticketSubject,
+// 						requester: ticket.requester,
+// 						unit: ticket.clientUnit,
+// 						createdAt: moment(ticket.createdAt).format(
+// 							"MMMM Do YYYY, h:mm:ss a"
+// 						),
+// 						priority: `bold:${ticket.priority.toUpperCase()}`,
+// 					};
+// 				}),
+// 			],
+// 		};
+
+// 		res.setHeader("Content-Type", "application/pdf");
+// 		res.setHeader("Content-Disposition", `inline; filename="${reportName}"`);
+
+// 		pdfDoc.pipe(fs.createWriteStream(reportPath));
+// 		await pdfDoc.table(table);
+
+// 		pdfDoc.pipe(res);
+// 		pdfDoc.end();
+// 	} catch (error) {
+// 		res.status(500).send({
+// 			success: false,
+// 			message: "Internal Server Error.",
+// 			error: error.message,
+// 		});
+// 	}
+// };
+
+// //@desc: 	GENERATE REPORT FOR ALL REOPENED TICKETS ASSIGNED TO IT SUPPORT
+// //@access:	IT SUPPORT
+// exports.generateReportReopenedTicketsItsupp = async (req, res) => {
+// 	try {
+// 		const assignedTickets = await Ticket.find({
+// 			assignTo: req.user.email,
+// 			status: "Reopened",
+// 		});
+// 		const reportName = `ITsupport-report-reopenedtickets-${moment(
+// 			Date.now()
+// 		).format("YYYYMMDD")}.pdf`;
+// 		const reportPath = path.join("reports", reportName);
+// 		const pdfDoc = new PDFDocument({ size: "A4", margin: 50 });
+
+// 		const table = {
+// 			headers: [
+// 				{
+// 					label: "TICKET NO.",
+// 					property: "ticketNo",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "SUBJECT",
+// 					property: "subject",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "REQUESTER",
+// 					property: "requester",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "UNIT",
+// 					property: "unit",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "DATE CREATED",
+// 					property: "createdAt",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 				{
+// 					label: "PRIORITY",
+// 					property: "priority",
+// 					align: "center",
+// 					headerAlign: "center",
+// 					padding: 10,
+// 				},
+// 			],
+
+// 			datas: [
+// 				...assignedTickets.map(ticket => {
+// 					const ticketCategory = ticket.ticketCategory;
+
+// 					//get the initials of the ticket category
+// 					const initials = ticketCategory
+// 						.split(" ")
+// 						.map(word => word[0])
+// 						.join("");
+
+// 					return {
+// 						ticketNo: `bold:${ticket.ticketNo} - ${initials.toUpperCase()}`,
+// 						subject: ticket.ticketSubject,
+// 						requester: ticket.requester,
+// 						unit: ticket.clientUnit,
+// 						createdAt: moment(ticket.createdAt).format(
+// 							"MMMM Do YYYY, h:mm:ss a"
+// 						),
+// 						priority: `bold:${ticket.priority.toUpperCase()}`,
+// 					};
+// 				}),
+// 			],
+// 		};
+
+// 		res.setHeader("Content-Type", "application/pdf");
+// 		res.setHeader("Content-Disposition", `inline; filename="${reportName}"`);
+
+// 		pdfDoc.pipe(fs.createWriteStream(reportPath));
+// 		await pdfDoc.table(table);
+
+// 		pdfDoc.pipe(res);
+// 		pdfDoc.end();
+// 	} catch (error) {
+// 		res.status(500).send({
+// 			success: false,
+// 			message: "Internal Server Error.",
+// 			error: error.message,
+// 		});
+// 	}
+// };
